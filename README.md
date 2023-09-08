@@ -5,3 +5,6 @@
 Link to frontend repo.
 
 https://github.com/serranoio/frontend
+
+
+Project Manager: Patrick Rajchel

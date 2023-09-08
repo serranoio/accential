@@ -104,3 +104,11 @@ func Consume(q amqp091.Queue, ch *amqp091.Channel) <-chan amqp091.Delivery {
 
 	return msgs
 }
+
+// func ConsumeOnQueue() {
+
+// }
+
+// func PublishOnQueue() {
+
+// }
