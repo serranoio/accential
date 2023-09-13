@@ -1,31 +1,37 @@
 package parser
 
 import (
-	"context"
-	"time"
-
 	helpers "backend/rabbitmq"
+	"log"
 )
 
-//   func Init() *amqp.Connection {
+func listenForPdfFile(communication *helpers.Communication) {
+	communication.AddConsumingEQ(helpers.EQ_PDF, "topic")
+	// communication.AddPublshingEQ(helpers.EQ)
 
-// 	//   return conn;
-// 	}
+	msgs := communication.ConsumeEQ(helpers.EQ_PDF)
+	var forever chan struct{}
 
-func Parse() {
+	go func() {
+		for d := range msgs {
+			log.Printf("parser: Received a message: %s", d.Body)
+			communication.PublishToEQ(helpers.EQ_PARSED_PDF, []byte("Hello from parser!"))
+		}
 
-	conn := helpers.InitConnection()
-	defer conn.Close()
+	}()
 
-	ch := helpers.InitChannel(conn)
-	defer ch.Close()
+	log.Printf("[*] parser Waiting for messages. To exit press CTRL+C")
+	<-forever
+}
 
-	helpers.InitExchange(ch, "fanout", "name")
+func InitParser() {
+	communication := helpers.CreateCommunication()
+	defer communication.Connection.Close()
+	defer communication.Channel.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	communication.AddPublshingEQ(helpers.EQ_PARSED_PDF, "topic")
+	defer communication.Context.Cancel()
 
-	message := "Hello from parser!"
+	listenForPdfFile(communication)
 
-	helpers.PublishMessage(ch, ctx, []byte(message))
 }

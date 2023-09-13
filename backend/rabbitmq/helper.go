@@ -44,13 +44,30 @@ func InitExchange(ch *amqp091.Channel, exchangeType, exchangeName string) {
 
 // publisher
 
-func PublishMessage(ch *amqp091.Channel, ctx context.Context, message []byte) {
+// func PublishMessage(ch *amqp091.Channel, ctx context.Context, message []byte) {
+
+// 	err := ch.PublishWithContext(ctx,
+// 		"logs", // exchange
+// 		"",     // routing key
+// 		false,  // mandatory
+// 		false,  // immediate
+// 		amqp.Publishing{
+// 			ContentType: "text/plain",
+// 			Body:        []byte(message),
+// 		})
+
+// 	FailOnError(err, "Failed to publish a message")
+
+// 	log.Printf(" [x] Sent %s", message)
+// }
+
+func PublishMessage(ch *amqp091.Channel, ctx context.Context, exchangeName string, message []byte) {
 
 	err := ch.PublishWithContext(ctx,
-		"logs", // exchange
-		"",     // routing key
-		false,  // mandatory
-		false,  // immediate
+		exchangeName, // exchange
+		"",           // routing key
+		false,        // mandatory
+		false,        // immediate
 		amqp.Publishing{
 			ContentType: "text/plain",
 			Body:        []byte(message),
@@ -69,7 +86,7 @@ func DeclareQueue(ch *amqp091.Channel, name string) amqp091.Queue {
 		name,  // name
 		false, // durable
 		false, // delete when unused
-		true,  // exclusive
+		false, // exclusive
 		false, // no-wait
 		nil,   // arguments
 	)

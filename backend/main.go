@@ -1,22 +1,32 @@
 package main
 
 import (
-	lexer "backend/lexer"
-	parser "backend/parser"
+	// lexer "backend/lexer"
+	// parser "backend/parser"
 
-	converter "backend/converter"
-	htmlReport "backend/html_report"
+	// converter "backend/converter"
 
-	"time"
+	"backend/api"
+	"backend/converter"
+	"backend/html_report"
+	"backend/lexer"
+	"backend/parser"
 )
 
 func main() {
 
-	go htmlReport.BuildReport() // consumer
-	go converter.Convert()      // consumer
+	// consumers
+	go parser.InitParser()
+	go lexer.InitLexer()
+	go converter.InitConverter()
+	go html_report.InitHtmlReport()
 
-	time.Sleep(2 * time.Second)
+	api.InitAPI()
+	// publishers
+	// for {
+	// time.Sleep(5 * time.Second)
+	// fmt.Println("called")
+	// api.PublishPdfFile(comm)
 
-	parser.Parse()   // publisher
-	lexer.Tokenize() // publisher
+	// }
 }

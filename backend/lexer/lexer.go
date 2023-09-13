@@ -1,31 +1,37 @@
 package lexer
 
 import (
-	"context"
-	"time"
-
 	helpers "backend/rabbitmq"
+	"log"
 )
 
-//   func Init() *amqp.Connection {
+func listenForParsedPdfFile(communication *helpers.Communication) {
+	communication.AddConsumingEQ(helpers.EQ_PARSED_PDF, "topic")
 
-// 	//   return conn;
-// 	}
+	msgs := communication.ConsumeEQ(helpers.EQ_PARSED_PDF)
+	var forever chan struct{}
 
-func Tokenize() {
+	go func() {
+		for d := range msgs {
+			log.Printf("lexer: Received a message: %s", d.Body)
+			communication.PublishToEQ(helpers.EQ_TOKENIZED_PDF, []byte("Hello from Tokenizer!"))
+		}
 
-	conn := helpers.InitConnection()
-	defer conn.Close()
+	}()
 
-	ch := helpers.InitChannel(conn)
-	defer ch.Close()
+	log.Printf("lexer [*] Waiting for messages. To exit press CTRL+C")
+	<-forever
+}
 
-	helpers.InitExchange(ch, "fanout", "name")
+func InitLexer() *helpers.Communication {
+	communication := helpers.CreateCommunication()
+	defer communication.Connection.Close()
+	defer communication.Channel.Close()
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	communication.AddPublshingEQ(helpers.EQ_TOKENIZED_PDF, "topic")
+	defer communication.Context.Cancel()
 
-	message := "Hello from lexer!"
+	listenForParsedPdfFile(communication)
 
-	helpers.PublishMessage(ch, ctx, []byte(message))
+	return communication
 }
