@@ -18,7 +18,7 @@ func receive() {
 	ch := helpers.InitChannel(conn)
 	defer ch.Close()
 
-	q := helpers.DeclareQueue(ch)
+	q := helpers.DeclareQueue(ch, "name")
 
 	helpers.BindQueue(q, ch, "logs")
 

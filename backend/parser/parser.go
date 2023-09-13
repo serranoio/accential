@@ -20,7 +20,7 @@ func Parse() {
 	ch := helpers.InitChannel(conn)
 	defer ch.Close()
 
-	helpers.InitExchange(ch, "fanout")
+	helpers.InitExchange(ch, "fanout", "name")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

@@ -29,9 +29,9 @@ func InitChannel(conn *amqp.Connection) *amqp091.Channel {
 	return ch
 }
 
-func InitExchange(ch *amqp091.Channel, exchangeType string) {
+func InitExchange(ch *amqp091.Channel, exchangeType, exchangeName string) {
 	err := ch.ExchangeDeclare(
-		"logs",       // name
+		exchangeName, // name
 		exchangeType, // type
 		true,         // durable
 		false,        // auto-deleted
@@ -63,10 +63,10 @@ func PublishMessage(ch *amqp091.Channel, ctx context.Context, message []byte) {
 
 // consumer
 
-func DeclareQueue(ch *amqp091.Channel) amqp091.Queue {
+func DeclareQueue(ch *amqp091.Channel, name string) amqp091.Queue {
 
 	q, err := ch.QueueDeclare(
-		"",    // name
+		name,  // name
 		false, // durable
 		false, // delete when unused
 		true,  // exclusive
