@@ -38,7 +38,6 @@ type Communication struct {
 // a topic exchange
 // a queue
 // a channel connection
-
 // exchange
 func CreateCommunication() *Communication {
 	conn := InitConnection()
@@ -77,7 +76,6 @@ func (c *Communication) AddPublshingEQ(name, exchangeType string) {
 		Name:  name,
 	}
 
-	// log.Println("Added publishing queue with name", name)
 }
 
 func (c *Communication) AddConsumingEQ(name, exchangeType string) {
@@ -96,23 +94,3 @@ func (c *Communication) PublishToEQ(name string, message []byte) {
 func (c *Communication) ConsumeEQ(name string) <-chan amqp091.Delivery {
 	return Consume(c.ConsumingEQ[name].Queue, c.Channel)
 }
-
-//
-
-// func (c *Communication) AddPublisherName(name string) {
-// 	c.Publishers = append(c.Publishers, name)
-// }
-
-// func (c *Communication) PublishMessage(message []byte) {
-// 	PublishMessage(c.Channel, c.Context.Ctx, message)
-// }
-
-// // func (c *Communication) AddConsumerName(name string) {
-// // 	c.Consumers = append(c.Consumers, name)
-// // }
-
-// func (c *Communication) ConsumeMessage() <-chan amqp091.Delivery {
-// 	return Consume(c.Queue.Queue, c.Channel)
-// }
-
-// func listen

@@ -3,6 +3,7 @@ package parser
 import (
 	helpers "backend/rabbitmq"
 	"log"
+	"time"
 )
 
 func listenForPdfFile(communication *helpers.Communication) {
@@ -15,6 +16,7 @@ func listenForPdfFile(communication *helpers.Communication) {
 	go func() {
 		for d := range msgs {
 			log.Printf("parser: Received a message: %s", d.Body)
+			time.Sleep(1 * time.Second)
 			communication.PublishToEQ(helpers.EQ_PARSED_PDF, []byte("Hello from parser!"))
 		}
 

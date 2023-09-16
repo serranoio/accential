@@ -3,6 +3,7 @@ package lexer
 import (
 	helpers "backend/rabbitmq"
 	"log"
+	"time"
 )
 
 func listenForParsedPdfFile(communication *helpers.Communication) {
@@ -14,6 +15,7 @@ func listenForParsedPdfFile(communication *helpers.Communication) {
 	go func() {
 		for d := range msgs {
 			log.Printf("lexer: Received a message: %s", d.Body)
+			time.Sleep(1 * time.Second)
 			communication.PublishToEQ(helpers.EQ_TOKENIZED_PDF, []byte("Hello from Tokenizer!"))
 		}
 

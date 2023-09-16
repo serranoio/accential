@@ -3,70 +3,80 @@ package api
 import (
 	helpers "backend/rabbitmq"
 	"log"
+	"net/http"
 	"time"
+
+	"path"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/rabbitmq/amqp091-go"
 )
 
-func Api() {
-
-	var forever chan struct{}
-
-	go func() {
-
-	}()
-
-	<-forever
-
-}
-
-const API = ""
-
-// func pdf(w http.ResponseWriter, rhelpers.EQ *http.Rhelpers.EQuest) {
-
-// 	// fmt.Fprintf(w, "hello\n")
-// }
-
-// func main() {
-
-// 	// http.HandleFunc(path.Join(API, "pdf"), pdf)
-
-// 	// http.ListenAndServe(":3000", nil)
-
-// 	consume()
-// }
+var msgs <-chan amqp091.Delivery
 
 func listenForHtmlReport(communication *helpers.Communication) {
 	communication.AddConsumingEQ(helpers.EQ_HTML_REPORT, "topic")
 
-	msgs := communication.ConsumeEQ(helpers.EQ_HTML_REPORT)
-	var forever chan struct{}
+	msgs = communication.ConsumeEQ(helpers.EQ_HTML_REPORT)
 
-	go func() {
-		for d := range msgs {
-			log.Printf("api: Received a message: %s", d.Body)
-		}
-	}()
+	// go func() {
+	// 	for d := range msgs {
+	// 		log.Printf("api: Received a message: %s", d.Body)
+	// 		time.Sleep(1 * time.Second)
+	// 	}
+	// }()
 
-	log.Printf("api [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	// log.Printf("api [*] Waiting for messages. To exit press CTRL+C")
 }
 
 func InitAPI() {
-	communication := helpers.CreateCommunication()
 
+	communication := helpers.CreateCommunication()
 	defer communication.Channel.Close()
 	defer communication.Connection.Close()
+
 	go listenForHtmlReport(communication)
 
 	time.Sleep(1 * time.Second)
+
 	communication.AddPublshingEQ(helpers.EQ_PDF, "topic")
 	defer communication.Context.Cancel()
 
-	// var forever chan struct{}
+	createApi(communication)
 
-	for {
-		time.Sleep(1 * time.Second)
+}
+
+const API = "api"
+
+func createApi(communication *helpers.Communication) {
+
+	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		// Access-Control-Allow-Origin
+		AllowMethods:     []string{"PUT", "GET", "PATCH"},
+		AllowHeaders:     []string{"Origin"},
+		AllowCredentials: true,
+		AllowFiles:       true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	r.GET(path.Join(API, "document"), func(c *gin.Context) {
+
+		// start call
+
+		// c.Request.Body.data
+
 		communication.PublishToEQ(helpers.EQ_PDF, []byte("Hello from front-facing api!"))
-	}
 
-	// <-forever
+		d := <-msgs // we wait for channel to finish
+
+		c.JSON(http.StatusOK, gin.H{
+			"document is done": string(d.Body),
+		})
+		log.Println("Message sent")
+	})
+
+	r.Run() // listen and serve on 0.0.0.0:8080
 }

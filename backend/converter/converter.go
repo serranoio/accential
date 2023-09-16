@@ -3,6 +3,7 @@ package converter
 import (
 	helpers "backend/rabbitmq"
 	"log"
+	"time"
 )
 
 func listenForTokenizedPdfFile(communication *helpers.Communication) {
@@ -14,6 +15,7 @@ func listenForTokenizedPdfFile(communication *helpers.Communication) {
 	go func() {
 		for d := range msgs {
 			log.Printf("Converter: Received a message: %s", d.Body)
+			time.Sleep(1 * time.Second)
 			communication.PublishToEQ(helpers.EQ_CONVERTED_DATA, []byte("Hello from Conveter!"))
 		}
 

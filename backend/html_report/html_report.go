@@ -3,6 +3,7 @@ package html_report
 import (
 	helpers "backend/rabbitmq"
 	"log"
+	"time"
 )
 
 func listenForConvertedData(communication *helpers.Communication) {
@@ -14,6 +15,7 @@ func listenForConvertedData(communication *helpers.Communication) {
 	go func() {
 		for d := range msgs {
 			log.Printf("html-report: Received a message: %s", d.Body)
+			time.Sleep(1 * time.Second)
 			communication.PublishToEQ(helpers.EQ_HTML_REPORT, []byte("Hello from html-report!"))
 		}
 
