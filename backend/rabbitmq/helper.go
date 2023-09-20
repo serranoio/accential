@@ -74,8 +74,6 @@ func PublishMessage(ch *amqp091.Channel, ctx context.Context, exchangeName strin
 		})
 
 	FailOnError(err, "Failed to publish a message")
-
-	log.Printf(" [x] Sent %s", message)
 }
 
 // consumer

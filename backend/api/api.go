@@ -2,14 +2,14 @@ package api
 
 import (
 	helpers "backend/rabbitmq"
+
+	// "encoding/base64"
+	"io"
 	"log"
-	"net/http"
+	"os"
+	"path"
 	"time"
 
-	"path"
-
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"github.com/rabbitmq/amqp091-go"
 )
 
@@ -23,7 +23,7 @@ func listenForHtmlReport(communication *helpers.Communication) {
 	// go func() {
 	// 	for d := range msgs {
 	// 		log.Printf("api: Received a message: %s", d.Body)
-	// 		time.Sleep(1 * time.Second)
+	// 		time.Sleep(0 * time.Second)
 	// 	}
 	// }()
 
@@ -38,45 +38,65 @@ func InitAPI() {
 
 	go listenForHtmlReport(communication)
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(0 * time.Second)
 
 	communication.AddPublshingEQ(helpers.EQ_PDF, "topic")
 	defer communication.Context.Cancel()
 
-	createApi(communication)
+	temp(communication)
 
+	// createApi(communication)
+
+}
+
+func temp(communication *helpers.Communication) {
+
+	currentWorkingDirectory, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	file, err := os.Open(path.Join(currentWorkingDirectory, "10-k-example.html"))
+
+	helpers.FailOnError(err, "file open")
+
+	bytes, err := io.ReadAll(file)
+
+	helpers.FailOnError(err, "file read")
+
+	communication.PublishToEQ(helpers.EQ_PDF, bytes)
 }
 
 const API = "api"
 
-func createApi(communication *helpers.Communication) {
+// func createApi(communication *helpers.Communication) {
 
-	r := gin.Default()
-	r.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
-		// Access-Control-Allow-Origin
-		AllowMethods:     []string{"PUT", "GET", "PATCH"},
-		AllowHeaders:     []string{"Origin"},
-		AllowCredentials: true,
-		AllowFiles:       true,
-		MaxAge:           12 * time.Hour,
-	}))
+// 	r := gin.Default()
+// 	r.Use(cors.New(cors.Config{
+// 		AllowAllOrigins: true,
+// 		// Access-Control-Allow-Origin
+// 		AllowMethods:     []string{"PUT", "GET", "PATCH"},
+// 		AllowHeaders:     []string{"Origin"},
+// 		AllowCredentials: true,
+// 		AllowFiles:       true,
+// 		MaxAge:           12 * time.Hour,
+// 	}))
 
-	r.GET(path.Join(API, "document"), func(c *gin.Context) {
+// 	r.POST(path.Join(API, "document"), func(c *gin.Context) {
+// 		bytes, err := io.ReadAll(c.Request.Body)
+// 		helpers.FailOnError(err, "failed to parse")
 
-		// start call
+// 		communication.PublishToEQ(helpers.EQ_PDF, bytes)
 
-		// c.Request.Body.data
+// 		// at the end when we receive everything
 
-		communication.PublishToEQ(helpers.EQ_PDF, []byte("Hello from front-facing api!"))
+// 		delivery := <-msgs // we wait for channel to finish
 
-		d := <-msgs // we wait for channel to finish
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"document is done": string(delivery.Body),
+// 		})
+// 		log.Println("Message sent")
+// 	})
 
-		c.JSON(http.StatusOK, gin.H{
-			"document is done": string(d.Body),
-		})
-		log.Println("Message sent")
-	})
-
-	r.Run() // listen and serve on 0.0.0.0:8080
-}
+// 	r.Run() // listen and serve on 0.0.0.0:8080
+// }

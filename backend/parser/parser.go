@@ -2,8 +2,14 @@ package parser
 
 import (
 	helpers "backend/rabbitmq"
+	"bytes"
+	"fmt"
+
+	// "encoding/base64"
+	// "fmt"
 	"log"
-	"time"
+
+	"golang.org/x/net/html"
 )
 
 func listenForPdfFile(communication *helpers.Communication) {
@@ -14,11 +20,43 @@ func listenForPdfFile(communication *helpers.Communication) {
 	var forever chan struct{}
 
 	go func() {
-		for d := range msgs {
-			log.Printf("parser: Received a message: %s", d.Body)
-			time.Sleep(1 * time.Second)
-			communication.PublishToEQ(helpers.EQ_PARSED_PDF, []byte("Hello from parser!"))
+		d := <-msgs
+
+		ioReader := bytes.NewReader(d.Body)
+
+		tokenizer := html.NewTokenizer(ioReader)
+
+		depth := 0
+
+	out:
+		for {
+			tt := tokenizer.Next()
+			// break
+			switch tt {
+			case html.ErrorToken:
+				tokenizer.Err()
+				break out
+			case html.TextToken:
+				if depth > 0 {
+					// emitBytes should copy the []byte it receives,
+					// if it doesn't process it immediately.
+
+					fmt.Printf("%s", tokenizer.Text())
+				}
+			case html.StartTagToken, html.EndTagToken:
+				tn, _ := tokenizer.TagName()
+				if len(tn) == 1 && tn[0] == 'p' {
+					if tt == html.StartTagToken {
+						depth++
+					} else {
+						depth--
+					}
+				}
+			}
 		}
+
+		communication.PublishToEQ(helpers.EQ_PARSED_PDF, []byte("Hello from parser!"))
+		// }
 
 	}()
 
