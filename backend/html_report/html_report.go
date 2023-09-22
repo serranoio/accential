@@ -1,10 +1,28 @@
 package html_report
 
 import (
+	"backend/lexer"
 	helpers "backend/rabbitmq"
+	"bytes"
+	"encoding/gob"
 	"log"
 	"time"
 )
+
+func receiveStatistics(stream []byte) *lexer.Statistics {
+
+	enc := gob.NewDecoder(bytes.NewReader(stream))
+
+	var statistics *lexer.Statistics
+
+	err := enc.Decode(&statistics)
+
+	if err != nil {
+		log.Panicln("did not decode")
+	}
+
+	return statistics
+}
 
 func listenForConvertedData(communication *helpers.Communication) {
 	communication.AddConsumingEQ(helpers.EQ_CONVERTED_DATA, "topic")
@@ -14,7 +32,10 @@ func listenForConvertedData(communication *helpers.Communication) {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("html-report: Received a message: %s", d.Body)
+			statistics := receiveStatistics(d.Body)
+
+			createReport(statistics)
+
 			time.Sleep(0 * time.Second)
 			communication.PublishToEQ(helpers.EQ_HTML_REPORT, []byte("Hello from html-report!"))
 		}

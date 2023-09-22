@@ -38,7 +38,7 @@ func InitAPI() {
 
 	go listenForHtmlReport(communication)
 
-	time.Sleep(0 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	communication.AddPublshingEQ(helpers.EQ_PDF, "topic")
 	defer communication.Context.Cancel()
@@ -64,7 +64,11 @@ func temp(communication *helpers.Communication) {
 
 	helpers.FailOnError(err, "file read")
 
+	forever := make(chan bool)
+
 	communication.PublishToEQ(helpers.EQ_PDF, bytes)
+
+	<-forever
 }
 
 const API = "api"

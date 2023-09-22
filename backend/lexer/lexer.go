@@ -1,10 +1,41 @@
 package lexer
 
 import (
+	"backend/parser"
 	helpers "backend/rabbitmq"
+	"bytes"
+	"encoding/gob"
 	"log"
 	"time"
 )
+
+func receiveTable(stream []byte) []*parser.Table {
+
+	enc := gob.NewDecoder(bytes.NewReader(stream))
+
+	var tables []*parser.Table
+
+	err := enc.Decode(&tables)
+
+	if err != nil {
+		log.Panicln("did not decode")
+	}
+
+	return tables
+}
+
+func sendStatistics(s *Statistics) []byte {
+	var network bytes.Buffer
+	enc := gob.NewEncoder(&network)
+
+	err := enc.Encode(&s)
+
+	if err != nil {
+		log.Panicln("did not encode")
+	}
+
+	return network.Bytes()
+}
 
 func listenForParsedPdfFile(communication *helpers.Communication) {
 	communication.AddConsumingEQ(helpers.EQ_PARSED_PDF, "topic")
@@ -14,9 +45,12 @@ func listenForParsedPdfFile(communication *helpers.Communication) {
 
 	go func() {
 		for d := range msgs {
-			log.Printf("lexer: Received a message: %s", d.Body)
+			tables := receiveTable(d.Body)
+
+			statistics := processTables(tables)
+
 			time.Sleep(0 * time.Second)
-			communication.PublishToEQ(helpers.EQ_TOKENIZED_PDF, []byte("Hello from Tokenizer!"))
+			communication.PublishToEQ(helpers.EQ_CONVERTED_DATA, sendStatistics(statistics))
 		}
 
 	}()
@@ -30,7 +64,7 @@ func InitLexer() *helpers.Communication {
 	defer communication.Connection.Close()
 	defer communication.Channel.Close()
 
-	communication.AddPublshingEQ(helpers.EQ_TOKENIZED_PDF, "topic")
+	communication.AddPublshingEQ(helpers.EQ_CONVERTED_DATA, "topic")
 	defer communication.Context.Cancel()
 
 	listenForParsedPdfFile(communication)
