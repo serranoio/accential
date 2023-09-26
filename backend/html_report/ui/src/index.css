@@ -1,0 +1,79 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  /* This will be our main */
+  --secondary-0: #f97e10; /* Main Secondary color (1) */
+  --secondary-1: #ffe2c9;
+  --secondary-1-shade-1: #eed1b8;
+  --secondary-1-shade-2: #ddc0a7;
+  --secondary-1-shade-3: #bb9f85;
+  --secondary-1-shade-4: #997d63;
+  --secondary-2: #f3a45e;
+  --secondary-3: #ce6100;
+  --secondary-4: #a74e00;
+
+  --primary-0: #f94c10; /* Main Primary color */
+  --primary-1: #ffd6c9;
+
+  --primary-1-shade-1: #e6c1b5;
+  --primary-1-shade-2: #ccaba1;
+  --primary-2: #f3845e;
+  --primary-3: #ce3500;
+  --primary-4: #a72b00;
+
+  --border: #2f2a20;
+  --background: #1f1a10;
+  --black: #000;
+
+  --fontSize1: 6.4rem;
+  --fontSize2: 4.2rem;
+  --fontSize3: 3rem;
+  --fontSizeP: 2rem;
+
+  --white: #ffffff;
+  --gray98: #f7f8fa;
+  --gray96: #f2f4f5;
+  --gray92: #E1e6eb;
+  --gray80: #C3cbd4;
+  --gray60: #918d99;
+  --gray45: #5c6773;
+  --gray30: #4c444d;
+  --gray25: #31373e;
+  --gray22: #2b3033;
+  --gray20: #171d21;
+  --black: #000000;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  background-color: var(--gray20);
+}
+
+h1,
+h2,
+h3,
+p {
+  color: var(--gary80);
+}
+
+
