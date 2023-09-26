@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"encoding/gob"
 	"log"
-	"time"
 )
 
 func receiveTable(stream []byte) []*parser.Table {
@@ -49,7 +48,6 @@ func listenForParsedPdfFile(communication *helpers.Communication) {
 
 			statistics := processTables(tables)
 
-			time.Sleep(0 * time.Second)
 			communication.PublishToEQ(helpers.EQ_CONVERTED_DATA, sendStatistics(statistics))
 		}
 
