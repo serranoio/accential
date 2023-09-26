@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + Lit + TS</title>
+    
+    
+    <script type="module" crossorigin src="/assets/index-0dd1f3c1.js"></script>
+
+    <script type="module"
+    crossorigin
+    >
+    (function(){const b=document.createElement("link").relList;if(b&&b.supports&&b.supports("modulepreload"))return;for(const j of document.querySelectorAll('link[rel="modulepreload"]'))U(j);new MutationObserver(j=>{for(const q of j)if(q.type==="childList")for(const F of q.addedNodes)F.tagName==="LINK"&&F.rel==="modulepreload"&&U(F)}).observe(document,{childList:!0,subtree:!0});function O(j){const q={};return j.integrity&&(q.integrity=j.integrity),j.referrerPolicy&&(q.referrerPolicy=j.referrerPolicy),j.crossOrigin==="use-credentials"?q.credentials="include":j.crossOrigin==="anonymous"?q.credentials="omit":q.credentials="same-origin",q}function U(j){if(j.ep)return;j.ep=!0;const q=O(j);fetch(j.href,q)}})();const index="";/**
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */const t$1=window,e$4=t$1.ShadowRoot&&(t$1.ShadyCSS===void 0||t$1.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$3=Symbol(),n$5=new WeakMap;let o$4=class{constructor(b,O,U){if(this._$cssResult$=!0,U!==s$3)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=b,this.t=O}get styleSheet(){let b=this.o;const O=this.t;if(e$4&&b===void 0){const U=O!==void 0&&O.length===1;U&&(b=n$5.get(O)),b===void 0&&((this.o=b=new CSSStyleSheet).replaceSync(this.cssText),U&&n$5.set(O,b))}return b}toString(){return this.cssText}};const r$2=W=>new o$4(typeof W=="string"?W:W+"",void 0,s$3),i$3=(W,...b)=>{const O=W.length===1?W[0]:b.reduce((U,j,q)=>U+(F=>{if(F._$cssResult$===!0)return F.cssText;if(typeof F=="number")return F;throw Error("Value passed to 'css' function must be a 'css' function result: "+F+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(j)+W[q+1],W[0]);return new o$4(O,W,s$3)},S$1=(W,b)=>{e$4?W.adoptedStyleSheets=b.map(O=>O instanceof CSSStyleSheet?O:O.styleSheet):b.forEach(O=>{const U=document.createElement("style"),j=t$1.litNonce;j!==void 0&&U.setAttribute("nonce",j),U.textContent=O.cssText,W.appendChild(U)})},c$1=e$4?W=>W:W=>W instanceof CSSStyleSheet?(b=>{let O="";for(const U of b.cssRules)O+=U.cssText;return r$2(O)})(W):W;/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */var s$2;const e$3=window,r$1=e$3.trustedTypes,h$1=r$1?r$1.emptyScript:"",o$3=e$3.reactiveElementPolyfillSupport,n$4={toAttribute(W,b){switch(b){case Boolean:W=W?h$1:null;break;case Object:case Array:W=W==null?W:JSON.stringify(W)}return W},fromAttribute(W,b){let O=W;switch(b){case Boolean:O=W!==null;break;case Number:O=W===null?null:Number(W);break;case Object:case Array:try{O=JSON.parse(W)}catch{O=null}}return O}},a$1=(W,b)=>b!==W&&(b==b||W==W),l$2={attribute:!0,type:String,converter:n$4,reflect:!1,hasChanged:a$1},d$1="finalized";let u$1=class extends HTMLElement{constructor(){super(),this._$Ei=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$El=null,this._$Eu()}static addInitializer(b){var O;this.finalize(),((O=this.h)!==null&&O!==void 0?O:this.h=[]).push(b)}static get observedAttributes(){this.finalize();const b=[];return this.elementProperties.forEach((O,U)=>{const j=this._$Ep(U,O);j!==void 0&&(this._$Ev.set(j,U),b.push(j))}),b}static createProperty(b,O=l$2){if(O.state&&(O.attribute=!1),this.finalize(),this.elementProperties.set(b,O),!O.noAccessor&&!this.prototype.hasOwnProperty(b)){const U=typeof b=="symbol"?Symbol():"__"+b,j=this.getPropertyDescriptor(b,U,O);j!==void 0&&Object.defineProperty(this.prototype,b,j)}}static getPropertyDescriptor(b,O,U){return{get(){return this[O]},set(j){const q=this[b];this[O]=j,this.requestUpdate(b,q,U)},configurable:!0,enumerable:!0}}static getPropertyOptions(b){return this.elementProperties.get(b)||l$2}static finalize(){if(this.hasOwnProperty(d$1))return!1;this[d$1]=!0;const b=Object.getPrototypeOf(this);if(b.finalize(),b.h!==void 0&&(this.h=[...b.h]),this.elementProperties=new Map(b.elementProperties),this._$Ev=new Map,this.hasOwnProperty("properties")){const O=this.properties,U=[...Object.getOwnPropertyNames(O),...Object.getOwnPropertySymbols(O)];for(const j of U)this.createProperty(j,O[j])}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(b){const O=[];if(Array.isArray(b)){const U=new Set(b.flat(1/0).reverse());for(const j of U)O.unshift(c$1(j))}else b!==void 0&&O.push(c$1(b));return O}static _$Ep(b,O){const U=O.attribute;return U===!1?void 0:typeof U=="string"?U:typeof b=="string"?b.toLowerCase():void 0}_$Eu(){var b;this._$E_=new Promise(O=>this.enableUpdating=O),this._$AL=new Map,this._$Eg(),this.requestUpdate(),(b=this.constructor.h)===null||b===void 0||b.forEach(O=>O(this))}addController(b){var O,U;((O=this._$ES)!==null&&O!==void 0?O:this._$ES=[]).push(b),this.renderRoot!==void 0&&this.isConnected&&((U=b.hostConnected)===null||U===void 0||U.call(b))}removeController(b){var O;(O=this._$ES)===null||O===void 0||O.splice(this._$ES.indexOf(b)>>>0,1)}_$Eg(){this.constructor.elementProperties.forEach((b,O)=>{this.hasOwnProperty(O)&&(this._$Ei.set(O,this[O]),delete this[O])})}createRenderRoot(){var b;const O=(b=this.shadowRoot)!==null&&b!==void 0?b:this.attachShadow(this.constructor.shadowRootOptions);return S$1(O,this.constructor.elementStyles),O}connectedCallback(){var b;this.renderRoot===void 0&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),(b=this._$ES)===null||b===void 0||b.forEach(O=>{var U;return(U=O.hostConnected)===null||U===void 0?void 0:U.call(O)})}enableUpdating(b){}disconnectedCallback(){var b;(b=this._$ES)===null||b===void 0||b.forEach(O=>{var U;return(U=O.hostDisconnected)===null||U===void 0?void 0:U.call(O)})}attributeChangedCallback(b,O,U){this._$AK(b,U)}_$EO(b,O,U=l$2){var j;const q=this.constructor._$Ep(b,U);if(q!==void 0&&U.reflect===!0){const F=(((j=U.converter)===null||j===void 0?void 0:j.toAttribute)!==void 0?U.converter:n$4).toAttribute(O,U.type);this._$El=b,F==null?this.removeAttribute(q):this.setAttribute(q,F),this._$El=null}}_$AK(b,O){var U;const j=this.constructor,q=j._$Ev.get(b);if(q!==void 0&&this._$El!==q){const F=j.getPropertyOptions(q),J=typeof F.converter=="function"?{fromAttribute:F.converter}:((U=F.converter)===null||U===void 0?void 0:U.fromAttribute)!==void 0?F.converter:n$4;this._$El=q,this[q]=J.fromAttribute(O,F.type),this._$El=null}}requestUpdate(b,O,U){let j=!0;b!==void 0&&(((U=U||this.constructor.getPropertyOptions(b)).hasChanged||a$1)(this[b],O)?(this._$AL.has(b)||this._$AL.set(b,O),U.reflect===!0&&this._$El!==b&&(this._$EC===void 0&&(this._$EC=new Map),this._$EC.set(b,U))):j=!1),!this.isUpdatePending&&j&&(this._$E_=this._$Ej())}async _$Ej(){this.isUpdatePending=!0;try{await this._$E_}catch(O){Promise.reject(O)}const b=this.scheduleUpdate();return b!=null&&await b,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var b;if(!this.isUpdatePending)return;this.hasUpdated,this._$Ei&&(this._$Ei.forEach((j,q)=>this[q]=j),this._$Ei=void 0);let O=!1;const U=this._$AL;try{O=this.shouldUpdate(U),O?(this.willUpdate(U),(b=this._$ES)===null||b===void 0||b.forEach(j=>{var q;return(q=j.hostUpdate)===null||q===void 0?void 0:q.call(j)}),this.update(U)):this._$Ek()}catch(j){throw O=!1,this._$Ek(),j}O&&this._$AE(U)}willUpdate(b){}_$AE(b){var O;(O=this._$ES)===null||O===void 0||O.forEach(U=>{var j;return(j=U.hostUpdated)===null||j===void 0?void 0:j.call(U)}),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(b)),this.updated(b)}_$Ek(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$E_}shouldUpdate(b){return!0}update(b){this._$EC!==void 0&&(this._$EC.forEach((O,U)=>this._$EO(U,this[U],O)),this._$EC=void 0),this._$Ek()}updated(b){}firstUpdated(b){}};u$1[d$1]=!0,u$1.elementProperties=new Map,u$1.elementStyles=[],u$1.shadowRootOptions={mode:"open"},o$3==null||o$3({ReactiveElement:u$1}),((s$2=e$3.reactiveElementVersions)!==null&&s$2!==void 0?s$2:e$3.reactiveElementVersions=[]).push("1.6.3");/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */var t;const i$2=window,s$1=i$2.trustedTypes,e$2=s$1?s$1.createPolicy("lit-html",{createHTML:W=>W}):void 0,o$2="$lit$",n$3=`lit$${(Math.random()+"").slice(9)}$`,l$1="?"+n$3,h=`<${l$1}>`,r=document,u=()=>r.createComment(""),d=W=>W===null||typeof W!="object"&&typeof W!="function",c=Array.isArray,v=W=>c(W)||typeof(W==null?void 0:W[Symbol.iterator])=="function",a=`[ 	
+\f\r]`,f=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${a}(?:([^\\s"'>=/]+)(${a}*=${a}*(?:[^ 	
+\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,w=W=>(b,...O)=>({_$litType$:W,strings:b,values:O}),x=w(1),T=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),E=new WeakMap,C=r.createTreeWalker(r,129,null,!1);function P(W,b){if(!Array.isArray(W)||!W.hasOwnProperty("raw"))throw Error("invalid template strings array");return e$2!==void 0?e$2.createHTML(b):b}const V=(W,b)=>{const O=W.length-1,U=[];let j,q=b===2?"<svg>":"",F=f;for(let J=0;J<O;J++){const K=W[J];let Y,G,X=-1,Q=0;for(;Q<K.length&&(F.lastIndex=Q,G=F.exec(K),G!==null);)Q=F.lastIndex,F===f?G[1]==="!--"?F=_:G[1]!==void 0?F=m:G[2]!==void 0?(y.test(G[2])&&(j=RegExp("</"+G[2],"g")),F=p):G[3]!==void 0&&(F=p):F===p?G[0]===">"?(F=j??f,X=-1):G[1]===void 0?X=-2:(X=F.lastIndex-G[2].length,Y=G[1],F=G[3]===void 0?p:G[3]==='"'?$:g):F===$||F===g?F=p:F===_||F===m?F=f:(F=p,j=void 0);const ee=F===p&&W[J+1].startsWith("/>")?" ":"";q+=F===f?K+h:X>=0?(U.push(Y),K.slice(0,X)+o$2+K.slice(X)+n$3+ee):K+n$3+(X===-2?(U.push(void 0),J):ee)}return[P(W,q+(W[O]||"<?>")+(b===2?"</svg>":"")),U]};class N{constructor({strings:b,_$litType$:O},U){let j;this.parts=[];let q=0,F=0;const J=b.length-1,K=this.parts,[Y,G]=V(b,O);if(this.el=N.createElement(Y,U),C.currentNode=this.el.content,O===2){const X=this.el.content,Q=X.firstChild;Q.remove(),X.append(...Q.childNodes)}for(;(j=C.nextNode())!==null&&K.length<J;){if(j.nodeType===1){if(j.hasAttributes()){const X=[];for(const Q of j.getAttributeNames())if(Q.endsWith(o$2)||Q.startsWith(n$3)){const ee=G[F++];if(X.push(Q),ee!==void 0){const re=j.getAttribute(ee.toLowerCase()+o$2).split(n$3),te=/([.?@])?(.*)/.exec(ee);K.push({type:1,index:q,name:te[2],strings:re,ctor:te[1]==="."?H:te[1]==="?"?L:te[1]==="@"?z:k})}else K.push({type:6,index:q})}for(const Q of X)j.removeAttribute(Q)}if(y.test(j.tagName)){const X=j.textContent.split(n$3),Q=X.length-1;if(Q>0){j.textContent=s$1?s$1.emptyScript:"";for(let ee=0;ee<Q;ee++)j.append(X[ee],u()),C.nextNode(),K.push({type:2,index:++q});j.append(X[Q],u())}}}else if(j.nodeType===8)if(j.data===l$1)K.push({type:2,index:q});else{let X=-1;for(;(X=j.data.indexOf(n$3,X+1))!==-1;)K.push({type:7,index:q}),X+=n$3.length-1}q++}}static createElement(b,O){const U=r.createElement("template");return U.innerHTML=b,U}}function S(W,b,O=W,U){var j,q,F,J;if(b===T)return b;let K=U!==void 0?(j=O._$Co)===null||j===void 0?void 0:j[U]:O._$Cl;const Y=d(b)?void 0:b._$litDirective$;return(K==null?void 0:K.constructor)!==Y&&((q=K==null?void 0:K._$AO)===null||q===void 0||q.call(K,!1),Y===void 0?K=void 0:(K=new Y(W),K._$AT(W,O,U)),U!==void 0?((F=(J=O)._$Co)!==null&&F!==void 0?F:J._$Co=[])[U]=K:O._$Cl=K),K!==void 0&&(b=S(W,K._$AS(W,b.values),K,U)),b}class M{constructor(b,O){this._$AV=[],this._$AN=void 0,this._$AD=b,this._$AM=O}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(b){var O;const{el:{content:U},parts:j}=this._$AD,q=((O=b==null?void 0:b.creationScope)!==null&&O!==void 0?O:r).importNode(U,!0);C.currentNode=q;let F=C.nextNode(),J=0,K=0,Y=j[0];for(;Y!==void 0;){if(J===Y.index){let G;Y.type===2?G=new R(F,F.nextSibling,this,b):Y.type===1?G=new Y.ctor(F,Y.name,Y.strings,this,b):Y.type===6&&(G=new Z(F,this,b)),this._$AV.push(G),Y=j[++K]}J!==(Y==null?void 0:Y.index)&&(F=C.nextNode(),J++)}return C.currentNode=r,q}v(b){let O=0;for(const U of this._$AV)U!==void 0&&(U.strings!==void 0?(U._$AI(b,U,O),O+=U.strings.length-2):U._$AI(b[O])),O++}}class R{constructor(b,O,U,j){var q;this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=b,this._$AB=O,this._$AM=U,this.options=j,this._$Cp=(q=j==null?void 0:j.isConnected)===null||q===void 0||q}get _$AU(){var b,O;return(O=(b=this._$AM)===null||b===void 0?void 0:b._$AU)!==null&&O!==void 0?O:this._$Cp}get parentNode(){let b=this._$AA.parentNode;const O=this._$AM;return O!==void 0&&(b==null?void 0:b.nodeType)===11&&(b=O.parentNode),b}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(b,O=this){b=S(this,b,O),d(b)?b===A||b==null||b===""?(this._$AH!==A&&this._$AR(),this._$AH=A):b!==this._$AH&&b!==T&&this._(b):b._$litType$!==void 0?this.g(b):b.nodeType!==void 0?this.$(b):v(b)?this.T(b):this._(b)}k(b){return this._$AA.parentNode.insertBefore(b,this._$AB)}$(b){this._$AH!==b&&(this._$AR(),this._$AH=this.k(b))}_(b){this._$AH!==A&&d(this._$AH)?this._$AA.nextSibling.data=b:this.$(r.createTextNode(b)),this._$AH=b}g(b){var O;const{values:U,_$litType$:j}=b,q=typeof j=="number"?this._$AC(b):(j.el===void 0&&(j.el=N.createElement(P(j.h,j.h[0]),this.options)),j);if(((O=this._$AH)===null||O===void 0?void 0:O._$AD)===q)this._$AH.v(U);else{const F=new M(q,this),J=F.u(this.options);F.v(U),this.$(J),this._$AH=F}}_$AC(b){let O=E.get(b.strings);return O===void 0&&E.set(b.strings,O=new N(b)),O}T(b){c(this._$AH)||(this._$AH=[],this._$AR());const O=this._$AH;let U,j=0;for(const q of b)j===O.length?O.push(U=new R(this.k(u()),this.k(u()),this,this.options)):U=O[j],U._$AI(q),j++;j<O.length&&(this._$AR(U&&U._$AB.nextSibling,j),O.length=j)}_$AR(b=this._$AA.nextSibling,O){var U;for((U=this._$AP)===null||U===void 0||U.call(this,!1,!0,O);b&&b!==this._$AB;){const j=b.nextSibling;b.remove(),b=j}}setConnected(b){var O;this._$AM===void 0&&(this._$Cp=b,(O=this._$AP)===null||O===void 0||O.call(this,b))}}class k{constructor(b,O,U,j,q){this.type=1,this._$AH=A,this._$AN=void 0,this.element=b,this.name=O,this._$AM=j,this.options=q,U.length>2||U[0]!==""||U[1]!==""?(this._$AH=Array(U.length-1).fill(new String),this.strings=U):this._$AH=A}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(b,O=this,U,j){const q=this.strings;let F=!1;if(q===void 0)b=S(this,b,O,0),F=!d(b)||b!==this._$AH&&b!==T,F&&(this._$AH=b);else{const J=b;let K,Y;for(b=q[0],K=0;K<q.length-1;K++)Y=S(this,J[U+K],O,K),Y===T&&(Y=this._$AH[K]),F||(F=!d(Y)||Y!==this._$AH[K]),Y===A?b=A:b!==A&&(b+=(Y??"")+q[K+1]),this._$AH[K]=Y}F&&!j&&this.j(b)}j(b){b===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,b??"")}}class H extends k{constructor(){super(...arguments),this.type=3}j(b){this.element[this.name]=b===A?void 0:b}}const I=s$1?s$1.emptyScript:"";class L extends k{constructor(){super(...arguments),this.type=4}j(b){b&&b!==A?this.element.setAttribute(this.name,I):this.element.removeAttribute(this.name)}}class z extends k{constructor(b,O,U,j,q){super(b,O,U,j,q),this.type=5}_$AI(b,O=this){var U;if((b=(U=S(this,b,O,0))!==null&&U!==void 0?U:A)===T)return;const j=this._$AH,q=b===A&&j!==A||b.capture!==j.capture||b.once!==j.once||b.passive!==j.passive,F=b!==A&&(j===A||q);q&&this.element.removeEventListener(this.name,this,j),F&&this.element.addEventListener(this.name,this,b),this._$AH=b}handleEvent(b){var O,U;typeof this._$AH=="function"?this._$AH.call((U=(O=this.options)===null||O===void 0?void 0:O.host)!==null&&U!==void 0?U:this.element,b):this._$AH.handleEvent(b)}}class Z{constructor(b,O,U){this.element=b,this.type=6,this._$AN=void 0,this._$AM=O,this.options=U}get _$AU(){return this._$AM._$AU}_$AI(b){S(this,b)}}const B=i$2.litHtmlPolyfillSupport;B==null||B(N,R),((t=i$2.litHtmlVersions)!==null&&t!==void 0?t:i$2.litHtmlVersions=[]).push("2.8.0");const D=(W,b,O)=>{var U,j;const q=(U=O==null?void 0:O.renderBefore)!==null&&U!==void 0?U:b;let F=q._$litPart$;if(F===void 0){const J=(j=O==null?void 0:O.renderBefore)!==null&&j!==void 0?j:null;q._$litPart$=F=new R(b.insertBefore(u(),J),J,void 0,O??{})}return F._$AI(W),F};/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */var l,o$1;class s extends u$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0}createRenderRoot(){var b,O;const U=super.createRenderRoot();return(b=(O=this.renderOptions).renderBefore)!==null&&b!==void 0||(O.renderBefore=U.firstChild),U}update(b){const O=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(b),this._$Do=D(O,this.renderRoot,this.renderOptions)}connectedCallback(){var b;super.connectedCallback(),(b=this._$Do)===null||b===void 0||b.setConnected(!0)}disconnectedCallback(){var b;super.disconnectedCallback(),(b=this._$Do)===null||b===void 0||b.setConnected(!1)}render(){return T}}s.finalized=!0,s._$litElement$=!0,(l=globalThis.litElementHydrateSupport)===null||l===void 0||l.call(globalThis,{LitElement:s});const n$2=globalThis.litElementPolyfillSupport;n$2==null||n$2({LitElement:s});((o$1=globalThis.litElementVersions)!==null&&o$1!==void 0?o$1:globalThis.litElementVersions=[]).push("3.3.3");/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */const e$1=W=>b=>typeof b=="function"?((O,U)=>(customElements.define(O,U),U))(W,b):((O,U)=>{const{kind:j,elements:q}=U;return{kind:j,elements:q,finisher(F){customElements.define(O,F)}}})(W,b);/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */const i$1=(W,b)=>b.kind==="method"&&b.descriptor&&!("value"in b.descriptor)?{...b,finisher(O){O.createProperty(b.key,W)}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:b.key,initializer(){typeof b.initializer=="function"&&(this[b.key]=b.initializer.call(this))},finisher(O){O.createProperty(b.key,W)}},e=(W,b,O)=>{b.constructor.createProperty(O,W)};function n$1(W){return(b,O)=>O!==void 0?e(W,b,O):i$1(W,b)}/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */const o=({finisher:W,descriptor:b})=>(O,U)=>{var j;if(U===void 0){const q=(j=O.originalKey)!==null&&j!==void 0?j:O.key,F=b!=null?{kind:"method",placement:"prototype",key:q,descriptor:b(O.key)}:{...O,key:q};return W!=null&&(F.finisher=function(J){W(J,q)}),F}{const q=O.constructor;b!==void 0&&Object.defineProperty(O,U,b(U)),W==null||W(q,U)}};/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */function i(W,b){return o({descriptor:O=>{const U={get(){var j,q;return(q=(j=this.renderRoot)===null||j===void 0?void 0:j.querySelector(W))!==null&&q!==void 0?q:null},enumerable:!0,configurable:!0};if(b){const j=typeof O=="symbol"?Symbol():"__"+O;U.get=function(){var q,F;return this[j]===void 0&&(this[j]=(F=(q=this.renderRoot)===null||q===void 0?void 0:q.querySelector(W))!==null&&F!==void 0?F:null),this[j]}}return U}})}/**
+ * @license
+ * Copyright 2021 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */var n;((n=window.HTMLSlotElement)===null||n===void 0?void 0:n.prototype.assignedElements)!=null;const mainStyles=i$3`
+html {
+  font-size: 62.5%;
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+main {
+  margin: 0 auto;
+  max-width: 130rem;
+
+}
+
+h1 {
+  text-align: center;
+  font-size: var(--fontSize1);
+}
+
+`,dummyMowc={Years:["2021","2020"],TotalAssets:[1404235e3,1372987e3],TotalLiabilities:[1353729e3,1335001e3],WorkingCapital:[1.0373087966646204,1.0284539112704785],Info:"The Measure of Working Capital is the Ratio of Total Assets / Total Liablities"},dummyStatistics={Mowc:dummyMowc},dummyDoc={name:"Siebert Corp"},navBarCss=i$3`
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+html {
+    font-size: 62.5%;
+}
+
+nav {
+    display: flex;
+    background-color: var(--gray20);
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2.4rem;
+    font-size: 2.4rem;
+    height: 70px; 
+}
+
+ul {
+    align-self: end;
+    display: flex;
+    align-items: end;
+    gap: .6rem;
+    list-style: none;
+    // height: 100%;
+}
+
+h3, .tab {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: var(--gray22);
+    padding: 1.2rem 2.4rem;
+    align-self: end;
+    color: var(--gray60);
+}
+
+.tab {
+    display: block;
+    border-bottom: 2px solid var(--gray25);
+    height: 100%;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.selected-tab {
+    color: var(--gray);
+    border-bottom: 2px solid var(--secondary-3);
+}
+
+
+`,Doc="Doc",CreateMetric="Create Metric",Distilled="Distilled";let tabs=[Distilled,Doc,CreateMetric];const SetSelectedTab="set-selected-tab";var __defProp$5=Object.defineProperty,__getOwnPropDesc$5=Object.getOwnPropertyDescriptor,__decorateClass$5=(W,b,O,U)=>{for(var j=U>1?void 0:U?__getOwnPropDesc$5(b,O):b,q=W.length-1,F;q>=0;q--)(F=W[q])&&(j=(U?F(b,O,j):F(j))||j);return U&&j&&__defProp$5(b,O,j),j};let NavBarComponent=class extends s{constructor(){super(),this.openView=!1,this.selectedTab=tabs[0]}handleClick(W){if(!W.target.closest("li"))return;let O=(W.target.nodeName==="LI"?W.target.querySelector("p"):W.target).innerHTML;O.split(">")[1].trim(),this.dispatchEvent(new CustomEvent(SetSelectedTab,{composed:!0,bubbles:!0,detail:{selectedTab:O.split(">")[1].trim()}}))}render(){return x`
+        <nav>
+        <h3>${dummyDoc.name} Report</h3>
+
+        <ul @click=${this.handleClick}>
+            ${tabs.map(W=>x`
+            <li class="tab
+            ${this.selectedTab===W?"selected-tab":""}
+            ">
+            <p>
+            ${W}
+            </p>
+            </li>`)}
+        </ul>
+        </nav>
+    `}};NavBarComponent.styles=[navBarCss];__decorateClass$5([n$1()],NavBarComponent.prototype,"openView",2);__decorateClass$5([n$1()],NavBarComponent.prototype,"selectedTab",2);NavBarComponent=__decorateClass$5([e$1("nav-bar")],NavBarComponent);const docCss=i$3`
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+html {
+    font-size: 62.5%;
+}
+
+`;var __defProp$4=Object.defineProperty,__getOwnPropDesc$4=Object.getOwnPropertyDescriptor,__decorateClass$4=(W,b,O,U)=>{for(var j=U>1?void 0:U?__getOwnPropDesc$4(b,O):b,q=W.length-1,F;q>=0;q--)(F=W[q])&&(j=(U?F(b,O,j):F(j))||j);return U&&j&&__defProp$4(b,O,j),j};let DocComponent=class extends s{constructor(){super(),this.openView=!1,this.selectedTab=tabs[0]}handleClick(W){if(!W.target.closest("li"))return;let O=(W.target.nodeName==="LI"?W.target.querySelector("p"):W.target).innerHTML;this.selectedTab=O.split(">")[1].trim()}render(){return x`
+       <section class="full">
+       hello
+       </section>
+    `}};DocComponent.styles=[docCss];__decorateClass$4([n$1()],DocComponent.prototype,"openView",2);__decorateClass$4([n$1()],DocComponent.prototype,"selectedTab",2);DocComponent=__decorateClass$4([e$1("doc-component")],DocComponent);const distilledCss=i$3`
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+}
+
+html {
+  font-size: 62.5%;
+}
+
+:host {
+  height: calc(100vh - 80px);
+  position: relative;
+  display: block;
+  background-color: var(--gray22);
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  overflow: hidden;
+}
+
+.row {
+    display: flex;
+    border-right: 1px solid var(--gray25);
+    border-left: 1px solid var(--gray25);
+    font-size: 2rem;
+    position: relative;
+    justify-content: space-between;
+  }
+  
+  .titles {
+    color: var(--gray92);
+  }
+
+  .second {
+    
+    color: var(--gray80);
+  }
+
+  .column {
+    display: block;
+    border: 1px solid var(--gray25);
+    display: flex;
+    align-items: center;
+    padding: 1.2rem 1.2rem; 
+    font-size: 2rem;
+    flex: 1;
+
+  }
+  
+  .report {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  tbody {
+    width: 100%;
+  }
+  
+  .more {
+    padding: .6rem 1.2rem;
+    border-radius: 10px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 0 0 2px var(--gray60);
+    color: var(--gray60);
+    transition: all .2s;
+  }
+  
+  .more:hover {
+    box-shadow: 0 0 0 2px var(--gray80);
+    color: var(--gray80);
+  
+  }
+  
+  .info {
+    overflow: hidden;
+    // transition: all .5s;
+    transform-origin: top;
+    height: 0;
+    visibility: hidden;
+    min-height: 0px;
+  }
+  .show {
+    overflow: visible;
+    padding: 1.2rem;
+    visibility: visible;
+    min-height: 0px;
+    height: auto;
+  }
+
+  .turn {
+    transform: rotate(180deg);
+  }
+`;var __defProp$3=Object.defineProperty,__getOwnPropDesc$3=Object.getOwnPropertyDescriptor,__decorateClass$3=(W,b,O,U)=>{for(var j=U>1?void 0:U?__getOwnPropDesc$3(b,O):b,q=W.length-1,F;q>=0;q--)(F=W[q])&&(j=(U?F(b,O,j):F(j))||j);return U&&j&&__defProp$3(b,O,j),j};let MetricComponent=class extends s{constructor(){super(),this.statistics=dummyStatistics,this.openView=!1}createRenderRoot(){return this}handleClick(){this.openView=!this.openView}render(){return x`
+        <tr class="row second">
+        <td class="column">
+        <h3>Working Capital</h3>
+        </td>
+        <td class="column">
+        <p>${this.statistics.Mowc.WorkingCapital[0]}</p>
+        </td>
+        <td class="column">
+          <p>${this.statistics.Mowc.WorkingCapital[0]>2?"Good":"Bad"}</p>
+        </td>
+        <td class="column">
+        <button
+        class="more ${this.openView?"turn":""}"
+        @click=${this.handleClick}
+        >v</button>
+        </td>
+        </tr>
+        
+        <tr class="row info ${this.openView?"show":""}">
+        <td >
+        <p>${this.statistics.Mowc.Info}<p>
+        <p>Total Assets: $${this.statistics.Mowc.TotalAssets[0]}</p>
+        <p>Total Liabilities: $${this.statistics.Mowc.TotalLiabilities[0]}</p>
+        </td>
+        </tr>
+    `}};__decorateClass$3([n$1()],MetricComponent.prototype,"statistics",2);__decorateClass$3([n$1()],MetricComponent.prototype,"openView",2);MetricComponent=__decorateClass$3([e$1("metric-component")],MetricComponent);const dummyMetric={Label:"",Value:-1,Explanation:"",Operation:null,NextMetric:null},evaluateMetric="evaluate-metric",addParenthesis="add-parenthesis",createMetric="create-metric";var MetricSteps=(W=>(W[W.EvaluateMetric=evaluateMetric]="EvaluateMetric",W[W.AddParenthesis=addParenthesis]="AddParenthesis",W[W.CreateMetric=createMetric]="CreateMetric",W))(MetricSteps||{});const createMetricCss=i$3`
+
+:host {
+    position: relative;
+    min-height: calc(100vh - 80px);
+    display: block;
+    background-color: var(--gray22);
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+figure {
+    padding: 2.4rem 9.8rem;
+}
+
+.configure-metric-div {
+    position: absolute;
+    display: flex;
+    justify-content: start;
+    align-items: end;
+    flex-direction: column;
+    gap: 2.4rem;
+    right: 0;
+    transform: translateX(50%);
+}
+
+h2 {
+    color: var(--gray80);
+    font-size: 6.4rem;
+}
+p {
+    color: var(--gray60);
+    font-size: 2rem;
+    margin-bottom: 2.4rem;
+}
+
+.create-metric,
+.add-another-metric,
+.remove-another-metric {
+    color: var(--gray60);
+    background: none;
+    box-shadow: 0 0 0 1px var(--gray60);
+    font-size: 2rem;
+    cursor: pointer;  
+    -webkit-backdrop-filter: blur(0.5em);
+    backdrop-filter: blur(0.5em);
+    padding: 1.2rem 3.6rem;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.add-another-metric,
+.remove-another-metric {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.create-metric:hover,
+.add-another-metric:hover,
+.remove-another-metric:hover {
+    color: var(--gray80);
+    box-shadow: 0 0 0 1px var(--gray80);
+}
+
+.create-metric {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    position: absolute;
+    left: 0;
+    transform: translate(-50%);
+    top: 20rem;
+}
+
+.remove-another-metric {
+    top: 8rem;
+}
+
+
+
+.create-metric-button:hover {
+    border: 2px solid var(--gray80);
+    color: var(-gray80);
+}
+
+
+
+input {
+    padding: 1.2rem;
+    border-radius: 10px;
+    font-size: 2rem;
+    background-color: transparent;
+    border: none;
+    box-shadow: 0 0 0 1px var(--gray80);
+    color: var(--gray80);
+}
+.operation-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.4rem 0;
+}
+
+.metric-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .6rem;
+}
+
+ 
+`;var __defProp$2=Object.defineProperty,__getOwnPropDesc$2=Object.getOwnPropertyDescriptor,__decorateClass$2=(W,b,O,U)=>{for(var j=U>1?void 0:U?__getOwnPropDesc$2(b,O):b,q=W.length-1,F;q>=0;q--)(F=W[q])&&(j=(U?F(b,O,j):F(j))||j);return U&&j&&__defProp$2(b,O,j),j};let CreateMetricComponent=class extends s{constructor(){super(),this.metrics=[structuredClone(dummyMetric)],this.metric=structuredClone(dummyMetric),this.valueIntermediate="",this.metricSteps=MetricSteps.EvaluateMetric}increaseMetricCounter(){this.metrics=[...this.metrics,structuredClone(dummyMetric)]}decreaseMetricCounter(){this.metrics.length<=1||(this.metrics=this.metrics.slice(0,this.metrics.length-1))}getMetric(W,b){return W===b.length-1?String(b[W].Value):b[W].Operation==="+"?b[W].Value+"+"+this.getMetric(W+1,b):b[W].Operation==="-"?b[W].Value+"-"+this.getMetric(W+1,b):b[W].Operation==="x"?b[W].Value+"*"+this.getMetric(W+1,b):b[W].Operation==="/"?b[W].Value+"/"+this.getMetric(W+1,b):String(b[W].Value)}calculateMetricFromMetrics(){this.valueIntermediate=this.getMetric(0,this.metrics)}doTheMath(e){this.metric.Value=eval(e.target.querySelector("#Value").value),console.log(this.metric.Value),this.metricSteps=MetricSteps.CreateMetric}evaluateMetric(){let W=0;const b=this.metricForm.querySelectorAll("input");let O=-1;for(const U of b)W%4===0?(O++,this.metrics[O].Label=U.value):W%4===1?this.metrics[O].Value=Number(U.value):W%4===2?this.metrics[O].Explanation=U.value:W%4===3&&O<this.metrics.length-1&&(this.metrics[O].Operation=U.value),W++;this.metricSteps=MetricSteps.AddParenthesis,this.calculateMetricFromMetrics()}onCreateMetric(W){W.preventDefault(),this.metricSteps===MetricSteps.EvaluateMetric?this.evaluateMetric():this.metricSteps===MetricSteps.AddParenthesis&&this.doTheMath(W)}buttonSteps(){return this.metricSteps===MetricSteps.EvaluateMetric?"Evaluate Metric":this.metricSteps===MetricSteps.AddParenthesis?"Finalize Metric":"Done!"}render(){const W=x` <button class="add-another-metric" @click=${this.increaseMetricCounter}> 
+    Add Another Metric
+    </button>`,b=x` <button class="remove-another-metric" @click=${this.decreaseMetricCounter}> 
+    Remove Another Metric
+    </button>`,O=this.metrics.map((q,F)=>x`
+      ${F===0?"":x`
+      <div class="operation-div">
+      <input type="text" placeholder="Operation"/>
+      </div>
+      `}
+      <div class="metric-div">
+      <input type="text" placeholder="Label"/>
+      <input type="number" placeholder="Value"/>
+      <input type="text" placeholder="Explanation"/>
+      </div>
+      `),U=x`
+    <div class="configure-metric-div">
+    ${W}
+    ${b}
+    </div>
+    `,j=x`
+    <h2>Name Your Metric</h2>
+    <p>Name your new metric, as well as add any necessary parenthesis for the calculation.</p>
+    <div class="metric-div">
+    <input type="text" placeholder="Name of Metric">
+    <input type="text" id="Value" value=${this.valueIntermediate}/>
+    <input type="text" placeholder="Explanation of Metric">
+    <input type="number" placeholder="Rating">
+    </div>
+    `;return x`
+        <figure
+        class=""
+        >
+       ${U}
+       
+       <form
+       @submit=${this.onCreateMetric}
+       id="metric-form"
+       >
+       ${this.metricSteps===MetricSteps.AddParenthesis?j:""}
+
+          ${this.metricSteps===MetricSteps.EvaluateMetric?x`
+            <h2>Evaluate Your Metric</h2>
+            <p>Put together multiple metrics from the document to create your own metric.<p>
+            ${O}
+            `:""}
+
+          <button
+          type="submit"
+          class="create-metric">
+         ${this.buttonSteps()}</button>
+
+
+
+        </form>
+
+        </figure>
+    `}};CreateMetricComponent.styles=[createMetricCss];__decorateClass$2([n$1()],CreateMetricComponent.prototype,"metrics",2);__decorateClass$2([n$1()],CreateMetricComponent.prototype,"metric",2);__decorateClass$2([i("#metric-form")],CreateMetricComponent.prototype,"metricForm",2);__decorateClass$2([n$1()],CreateMetricComponent.prototype,"valueIntermediate",2);__decorateClass$2([n$1()],CreateMetricComponent.prototype,"metricSteps",2);CreateMetricComponent=__decorateClass$2([e$1("create-metric-component")],CreateMetricComponent);var __defProp$1=Object.defineProperty,__getOwnPropDesc$1=Object.getOwnPropertyDescriptor,__decorateClass$1=(W,b,O,U)=>{for(var j=U>1?void 0:U?__getOwnPropDesc$1(b,O):b,q=W.length-1,F;q>=0;q--)(F=W[q])&&(j=(U?F(b,O,j):F(j))||j);return U&&j&&__defProp$1(b,O,j),j};let DistilledComponent=class extends s{constructor(){super(),this.statistics=dummyStatistics}render(){return x`
+       <section class="full">
+
+    <table class="report">
+
+<tbody>
+
+      <tr class="row titles">
+        <td class="column">
+          <h3>Metric</h3>
+        </td>
+        <td class="column">
+          <p>$</p>
+        </td>
+        <td class="column">
+          <p>Rating</p>
+        </td>
+        
+        <td class="column">
+        <p>More</p>
+        </td>
+        </tr>
+        </tbody>
+        
+        </table> 
+        
+        <metric-component>
+        </metric-component>
+
+        <metric-component>
+        </metric-component>
+        
+        <metric-component>
+        </metric-component>
+        
+        <metric-component>
+        </metric-component>
+
+       </section>
+    `}};DistilledComponent.styles=[distilledCss];__decorateClass$1([n$1()],DistilledComponent.prototype,"statistics",2);DistilledComponent=__decorateClass$1([e$1("distilled-component")],DistilledComponent);var __defProp=Object.defineProperty,__getOwnPropDesc=Object.getOwnPropertyDescriptor,__decorateClass=(W,b,O,U)=>{for(var j=U>1?void 0:U?__getOwnPropDesc(b,O):b,q=W.length-1,F;q>=0;q--)(F=W[q])&&(j=(U?F(b,O,j):F(j))||j);return U&&j&&__defProp(b,O,j),j};let Main=class extends s{constructor(){super(),this.selectedTab=Distilled,this.statistics=dummyStatistics,document.addEventListener(SetSelectedTab,this.setSelectedTab.bind(this))}setSelectedTab(W){this.selectedTab=W.detail.selectedTab}getMain(){let W=x``;return this.selectedTab===Doc?W=x`<doc-component>
+      </doc-component>`:this.selectedTab===Distilled?W=x`
+      <distilled-component
+      .statistics=${this.statistics}
+      ></distilled-component>`:this.selectedTab===CreateMetric&&(W=x`
+      <create-metric-component>
+      </create-metric-component>
+      `),W}render(){return x`
+    <main>
+    <nav-bar
+    .selectedTab=${this.selectedTab}
+    >
+    </nav-bar>
+
+    ${this.getMain()}
+  
+
+
+    
+    </main>
+    `}};Main.styles=[mainStyles];__decorateClass([n$1()],Main.prototype,"statistics",2);__decorateClass([n$1()],Main.prototype,"selectedTab",2);Main=__decorateClass([e$1("main-component")],Main);
+
+
+    </script>
+
+    <style>
+    
+    :root{font-family:Inter,system-ui,Avenir,Helvetica,Arial,sans-serif;line-height:1.5;font-weight:400;color-scheme:light dark;color:#ffffffde;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-text-size-adjust:100%;--secondary-0: #f97e10;--secondary-1: #ffe2c9;--secondary-1-shade-1: #eed1b8;--secondary-1-shade-2: #ddc0a7;--secondary-1-shade-3: #bb9f85;--secondary-1-shade-4: #997d63;--secondary-2: #f3a45e;--secondary-3: #ce6100;--secondary-4: #a74e00;--primary-0: #f94c10;--primary-1: #ffd6c9;--primary-1-shade-1: #e6c1b5;--primary-1-shade-2: #ccaba1;--primary-2: #f3845e;--primary-3: #ce3500;--primary-4: #a72b00;--border: #2f2a20;--background: #1f1a10;--black: #000;--fontSize1: 6.4rem;--fontSize2: 4.2rem;--fontSize3: 3rem;--fontSizeP: 2rem;--white: #ffffff;--gray98: #f7f8fa;--gray96: #f2f4f5;--gray92: #E1e6eb;--gray80: #C3cbd4;--gray60: #918d99;--gray45: #5c6773;--gray30: #4c444d;--gray25: #31373e;--gray22: #2b3033;--gray20: #171d21;--black: #000000}*{box-sizing:border-box;padding:0;margin:0}html{font-size:62.5%}body{background-color:var(--gray20)}h1,h2,h3,p{color:var(--gary80)}
+
+
+    </style>
+
+    <link rel="stylesheet" href="/assets/index-20d54353.css">
+  </head>
+  <body>
+
+    <main-component>
+    </main-component>
+
+  </body>
+</html>
