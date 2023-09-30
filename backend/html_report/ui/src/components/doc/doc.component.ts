@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 
 import { tabs } from '../../model/tabs';
 import docCss from './doc.css';
-
+import { LabelValueSteps, dummyMetric } from '../../model/metric';
 
 @customElement('doc-component')
 export class DocComponent extends LitElement {
@@ -15,24 +15,50 @@ export class DocComponent extends LitElement {
   @property()
   selectedTab = tabs[0];
 
+  @property()
+  // @ts-ignore
+  frame: HTMLDivElement;
+
+  @property()
+  creatingMetricFromDocument = structuredClone(dummyMetric)
+
+  @property()
+  labelValueSteps = LabelValueSteps.Label;
+
   constructor() {
     super()
   }
 
-  handleClick(e: any) {
-    if (!e.target.closest("li")) return;
+  getValue(): string {
+    return this.creatingMetricFromDocument.Value === -1 ?
+    "" :
+    String(this.creatingMetricFromDocument.Value);
+  }
 
-    let target = e.target.nodeName === "LI" ? e.target.querySelector("p") : e.target;
-    let innerHTML = target.innerHTML;
+  getLabel(): string {
+    const label = this.creatingMetricFromDocument.Label;
 
-    this.selectedTab = innerHTML.split(">")[1].trim();
+    return label.length > 8 ? label.slice(0,8) + "..." : String(label); 
   }
 
   render() {
+
     return html`
-       <section class="full">
-       hello
-       </section>
+        ${this.frame}
+
+        <aside class="labels">
+
+        <h3>Current Metric</h3>
+          <figure class="current-metric">
+          <p class="${this.labelValueSteps === LabelValueSteps.Label ? "on" : ""}"
+          >Label: ${this.getLabel()}</p>
+          <p class="${this.labelValueSteps === LabelValueSteps.Value ? "on" : ""}"
+          >Value: ${this.getValue()}</p>
+          <p class="${this.labelValueSteps === LabelValueSteps.Explanation ? "on" : ""}"   
+          >Explanation: </p>
+          </figure>
+          
+        </aside>
     `
   }
 }

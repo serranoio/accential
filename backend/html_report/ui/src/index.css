@@ -48,11 +48,16 @@
   --gray80: #C3cbd4;
   --gray60: #918d99;
   --gray45: #5c6773;
-  --gray30: #4c444d;
+  --gray30: #3c444d;
   --gray25: #31373e;
   --gray22: #2b3033;
   --gray20: #171d21;
   --black: #000000;
+
+  --success: #53a051;
+  --info: #006d9c;
+
+  --infoColorD10: #00577c;
 }
 
 * {
@@ -77,3 +82,13 @@ p {
 }
 
 
+
+.doc {
+  display: none;
+}
+
+
+.highlighted {
+  box-shadow: 0 0 0 2px green;
+  font-size: 40px;
+}

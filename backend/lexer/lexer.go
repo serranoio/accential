@@ -23,7 +23,7 @@ func receiveTable(stream []byte) []*parser.Table {
 	return tables
 }
 
-func sendStatistics(s *Statistics) []byte {
+func sendStatistics(s []*Metric) []byte {
 	var network bytes.Buffer
 	enc := gob.NewEncoder(&network)
 

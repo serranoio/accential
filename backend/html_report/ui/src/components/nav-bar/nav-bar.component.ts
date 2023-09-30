@@ -28,7 +28,7 @@ export class NavBarComponent extends LitElement {
     let innerHTML = target.innerHTML;
 
     
-    innerHTML.split(">")[1].trim();
+    this.selectedTab = innerHTML.split(">")[1].trim();
 
 
     this.dispatchEvent(new CustomEvent(SetSelectedTab, {
@@ -41,6 +41,8 @@ export class NavBarComponent extends LitElement {
   }
 
   render() {
+
+    
     return html`
         <nav>
         <h3>${dummyDoc.name} Report</h3>

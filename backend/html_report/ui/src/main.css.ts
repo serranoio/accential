@@ -12,13 +12,28 @@ html {
 
 main {
   margin: 0 auto;
-  max-width: 130rem;
+  max-width: 140rem;
 
+  position: relative;
 }
 
 h1 {
   text-align: center;
   font-size: var(--fontSize1);
+}
+
+
+.status {
+  position: absolute;
+  right: 0%;
+  transform: translateX(50%);
+  bottom: 5%;
+  background-color: var(--gray30);
+  padding: 1.2rem 3.2rem;
+  font-size: 2rem;
+  border-radius: 10px;
+  color: var(--80);
+  border: none;
 }
 
 `

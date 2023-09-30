@@ -3,21 +3,22 @@ export interface Metric {
     Value: number,
     Explanation: String,
     Operation: String | null,
-    NextMetric: Metric | null,
+    Metrics: Metric[],
+    Rating: number,
 }
 
-export const dummyMetric: Metric = {
+export let dummyMetric: Metric = {
     Label: "",
     Value: -1,
     Explanation: "",
     Operation: null,
-    NextMetric: null,
+    Metrics: [],
+    Rating: -1,
 }
 
 export const evaluateMetric = "evaluate-metric";
 export const addParenthesis = "add-parenthesis";
 export const createMetric = "create-metric";
-
 
 export enum MetricSteps {
     EvaluateMetric = evaluateMetric,
@@ -25,3 +26,28 @@ export enum MetricSteps {
     CreateMetric = createMetric
 }  
 
+export enum AddMetricSteps {
+    AddMetric = "add-metric",
+    ChooseMethod = "choose-method",
+    AddingMetric = "adding-metric"
+}
+
+export const fromDocument = "From Document"
+export const setManually = "Set Manually"
+export const fromOutsideSource = "From Outside Source"
+
+export enum CreateMetricOptions {
+    FromDocument = fromDocument,
+    SetManually = setManually,
+    FromOutsideSource = fromOutsideSource
+}
+
+export const label = "setting-label"
+export const value = "setting-value"
+export const explanation = "setting-explanation"
+
+export enum LabelValueSteps {
+    Label = label,
+    Value = value,
+    Explanation = explanation,
+}

@@ -1,6 +1,6 @@
-import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { Statistics, dummyStatistics } from '../../../model/statistics';
+import { LitElement, html } from 'lit'
 
 
 
@@ -11,6 +11,15 @@ statistics: Statistics = dummyStatistics;
 
 @property()
 openView = false;
+
+@property()
+Label: string = "";
+
+@property()
+Value: number = 0;
+
+@property()
+Explanation: string = "";
     
   constructor() {
     super()
@@ -26,16 +35,17 @@ openView = false;
   }
 
   render() {
+    // <p>${this.Rating ? "Good" : "Bad"}</p>
     return html`
         <tr class="row second">
         <td class="column">
-        <h3>Working Capital</h3>
+        <h3>${this.Label}</h3>
         </td>
         <td class="column">
-        <p>${this.statistics.Mowc.WorkingCapital[0]}</p>
+        <p>${this.Value}</p>
         </td>
         <td class="column">
-          <p>${this.statistics.Mowc.WorkingCapital[0] > 2 ? "Good" : "Bad"}</p>
+        none
         </td>
         <td class="column">
         <button
@@ -47,9 +57,7 @@ openView = false;
         
         <tr class="row info ${this.openView ? "show" : ""}">
         <td >
-        <p>${this.statistics.Mowc.Info}<p>
-        <p>Total Assets: $${this.statistics.Mowc.TotalAssets[0]}</p>
-        <p>Total Liabilities: $${this.statistics.Mowc.TotalLiabilities[0]}</p>
+        <p>${this.Explanation}</p>
         </td>
         </tr>
     `
