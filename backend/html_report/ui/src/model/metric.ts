@@ -1,19 +1,19 @@
 export interface Metric {
-    Label: String,
-    Value: number,
-    Explanation: String,
-    Operation: String | null,
-    Metrics: Metric[],
-    Rating: number,
+    label: String,
+    value: number,
+    explanation: String,
+    operation: String | null,
+    metrics: Metric[],
+    rating: number,
 }
 
 export let dummyMetric: Metric = {
-    Label: "",
-    Value: -1,
-    Explanation: "",
-    Operation: null,
-    Metrics: [],
-    Rating: -1,
+    label: "",
+    value: -1,
+    explanation: "",
+    operation: null,
+    metrics: [],
+    rating: -1,
 }
 
 export const evaluateMetric = "evaluate-metric";

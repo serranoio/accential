@@ -1,7 +1,11 @@
 package api
 
 import (
+	"backend/database"
+	"backend/lexer"
 	helpers "backend/rabbitmq"
+	"encoding/json"
+	"net/http"
 
 	// "encoding/base64"
 	"io"
@@ -10,6 +14,8 @@ import (
 	"path"
 	"time"
 
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"github.com/rabbitmq/amqp091-go"
 )
 
@@ -31,6 +37,7 @@ func listenForHtmlReport(communication *helpers.Communication) {
 }
 
 func InitAPI() {
+	database.InitDatabase()
 
 	communication := helpers.CreateCommunication()
 	defer communication.Channel.Close()
@@ -45,9 +52,11 @@ func InitAPI() {
 
 	temp(communication)
 
-	// createApi(communication)
+	createApi(communication)
 
 }
+
+var Document []byte
 
 func temp(communication *helpers.Communication) {
 
@@ -64,43 +73,82 @@ func temp(communication *helpers.Communication) {
 
 	helpers.FailOnError(err, "file read")
 
-	forever := make(chan bool)
+	Document = bytes
 
+	// send to lexer
 	communication.PublishToEQ(helpers.EQ_PDF, bytes)
+	// send directly to create_report
 
-	<-forever
 }
 
 const API = "api"
 
-// func createApi(communication *helpers.Communication) {
+func createApi(communication *helpers.Communication) {
 
-// 	r := gin.Default()
-// 	r.Use(cors.New(cors.Config{
-// 		AllowAllOrigins: true,
-// 		// Access-Control-Allow-Origin
-// 		AllowMethods:     []string{"PUT", "GET", "PATCH"},
-// 		AllowHeaders:     []string{"Origin"},
-// 		AllowCredentials: true,
-// 		AllowFiles:       true,
-// 		MaxAge:           12 * time.Hour,
-// 	}))
+	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		// Access-Control-Allow-Origin
+		AllowMethods:     []string{"PUT", "GET", "PATCH", "POST"},
+		AllowHeaders:     []string{"Origin"},
+		AllowCredentials: true,
+		AllowFiles:       true,
+		MaxAge:           12 * time.Hour,
+	}))
 
-// 	r.POST(path.Join(API, "document"), func(c *gin.Context) {
-// 		bytes, err := io.ReadAll(c.Request.Body)
-// 		helpers.FailOnError(err, "failed to parse")
+	r.POST(path.Join(API, "document"), func(c *gin.Context) {
+		bytes, err := io.ReadAll(c.Request.Body)
+		helpers.FailOnError(err, "failed to parse")
 
-// 		communication.PublishToEQ(helpers.EQ_PDF, bytes)
+		communication.PublishToEQ(helpers.EQ_PDF, bytes)
 
-// 		// at the end when we receive everything
+		// at the end when we receive everything
 
-// 		delivery := <-msgs // we wait for channel to finish
+		delivery := <-msgs // we wait for channel to finish
 
-// 		c.JSON(http.StatusOK, gin.H{
-// 			"document is done": string(delivery.Body),
-// 		})
-// 		log.Println("Message sent")
-// 	})
+		c.JSON(http.StatusOK, gin.H{
+			"document is done": string(delivery.Body),
+		})
+		log.Println("Message sent")
+	})
 
-// 	r.Run() // listen and serve on 0.0.0.0:8080
-// }
+	r.POST(path.Join(API, "metric", "add"), func(c *gin.Context) {
+		bytes, err := io.ReadAll(c.Request.Body)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"failed to parse": "bad",
+			})
+		}
+
+		metric := &lexer.Metric{}
+
+		err = json.Unmarshal(bytes, &metric)
+
+		database.Db.Create(metric)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"failed to parse": "bad",
+			})
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "success",
+		})
+	})
+
+	r.GET(path.Join(API, "metric", "get"), func(c *gin.Context) {
+
+		metrics := []*lexer.Metric{}
+
+		database.Db.Find(&metrics)
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": metrics,
+		})
+
+	})
+
+	r.Run() // listen and serve on 0.0.0.0:8080
+	log.Println("listen and serve on 0.0.0.0:8080")
+}

@@ -9,11 +9,11 @@ import (
 	"time"
 )
 
-func receiveStatistics(stream []byte) *lexer.Statistics {
+func receiveStatistics(stream []byte) []*lexer.Metric {
 
 	enc := gob.NewDecoder(bytes.NewReader(stream))
 
-	var statistics *lexer.Statistics
+	var statistics []*lexer.Metric
 
 	err := enc.Decode(&statistics)
 

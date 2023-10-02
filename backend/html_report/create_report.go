@@ -1,6 +1,7 @@
 package html_report
 
 import (
+	"backend/api"
 	"backend/lexer"
 	"bytes"
 	"fmt"
@@ -16,12 +17,17 @@ import (
 type Document struct {
 	HydratedJS  string
 	HydratedCSS string
+	Metrics     []*lexer.Metric
+	Fun         string
+	Document    string
 }
 
 func createDocument() *Document {
 	return &Document{
 		HydratedJS:  "",
 		HydratedCSS: "",
+		Metrics:     nil,
+		Fun:         "hello",
 	}
 
 }
@@ -74,23 +80,15 @@ func (d *Document) hydrateAssets() {
 	d.HydratedJS = string(jsBytes)
 }
 
-func createReport(statistics *lexer.Statistics) {
-
-	for _, v := range statistics.Mowc.TotalAssets {
-		fmt.Println(v)
-	}
-	for _, v := range statistics.Mowc.TotalLiabilities {
-		fmt.Println(v)
-	}
-	for _, v := range statistics.Mowc.WorkingCapital {
-		fmt.Println(v)
-	}
+func createReport(metrics []*lexer.Metric) {
 
 	document := createDocument()
 
 	document.hydrateAssets()
+	document.Metrics = metrics
 
-	fmt.Println("Done")
+	document.Document = string(api.Document)
+
 	var byteBuf bytes.Buffer // execute template on byte buffer
 
 	dir, err := os.Getwd()
@@ -105,4 +103,5 @@ func createReport(statistics *lexer.Statistics) {
 	tmpl.Execute(&byteBuf, document)
 
 	os.WriteFile("report.html", byteBuf.Bytes(), 0664)
+	log.Println("File Written")
 }

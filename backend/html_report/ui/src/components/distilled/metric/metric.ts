@@ -13,13 +13,13 @@ statistics: Statistics = dummyStatistics;
 openView = false;
 
 @property()
-Label: string = "";
+label: string = "";
 
 @property()
-Value: number = 0;
+value: number = 0;
 
 @property()
-Explanation: string = "";
+explanation: string = "";
     
   constructor() {
     super()
@@ -39,10 +39,10 @@ Explanation: string = "";
     return html`
         <tr class="row second">
         <td class="column">
-        <h3>${this.Label}</h3>
+        <h3>${this.label}</h3>
         </td>
         <td class="column">
-        <p>${this.Value}</p>
+        <p>${this.value}</p>
         </td>
         <td class="column">
         none
@@ -57,7 +57,7 @@ Explanation: string = "";
         
         <tr class="row info ${this.openView ? "show" : ""}">
         <td >
-        <p>${this.Explanation}</p>
+        <p>${this.explanation}</p>
         </td>
         </tr>
     `

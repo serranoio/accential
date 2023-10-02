@@ -21,6 +21,7 @@ html {
   border-top-right-radius: 10px;
   border-top-left-radius: 10px;
   overflow: hidden;
+  overflow-y: scroll;
 }
 
 .row {

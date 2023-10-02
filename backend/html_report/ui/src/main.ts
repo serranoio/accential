@@ -9,6 +9,7 @@ import "./components/distilled/distilled.component"
 import { CreateMetric, Distilled, Doc } from './model/tabs';
 import { SetSelectedTab } from './model/events';
 import { AddMetricSteps, CreateMetricOptions, LabelValueSteps, Metric, dummyMetric } from './model/metric';
+import { GetAllMetrics } from './model/api';
 
 @customElement('main-component')
 export class Main extends LitElement {
@@ -18,7 +19,7 @@ export class Main extends LitElement {
   statistics: Statistics;
 
   @property()
-  metrics: Metric[] = [structuredClone(dummyMetric)]
+  creatingMetrics: Metric[] = [structuredClone(dummyMetric)]
 
   @property()
   selectedTab = CreateMetric;
@@ -67,26 +68,25 @@ export class Main extends LitElement {
 
   extractContent(element: HTMLElement, advanceStep: boolean) {
     if (this.labelValueSteps === LabelValueSteps.Label) {
-      this.creatingMetricFromDocument.Label = element.innerText;
+      this.creatingMetricFromDocument.label = element.innerText;
       if (advanceStep) {
         this.labelValueSteps = LabelValueSteps.Value
-        this.metrics[this.creatingMetricInputs].Label = this.creatingMetricFromDocument.Label
-        this.metrics = structuredClone(this.metrics)
+        this.creatingMetrics[this.creatingMetricInputs].label = this.creatingMetricFromDocument.label
+        this.creatingMetrics = structuredClone(this.creatingMetrics)
       }
     } else if (this.labelValueSteps === LabelValueSteps.Value) {
       const num = element.innerText.replace(/\,/g,'');
       
-      this.creatingMetricFromDocument.Value = Number(num);
+      this.creatingMetricFromDocument.value = Number(num);
       if (advanceStep) {
         this.labelValueSteps = LabelValueSteps.Explanation
         this.selectedTab = CreateMetric
-        this.metrics[this.creatingMetricInputs].Value = this.creatingMetricFromDocument.Value
-        this.metrics = structuredClone(this.metrics)
+        this.creatingMetrics[this.creatingMetricInputs].value = this.creatingMetricFromDocument.value
+        this.creatingMetrics = structuredClone(this.creatingMetrics)
       }
     }
     this.creatingMetricFromDocument = structuredClone(this.creatingMetricFromDocument)
   }
-
 
   onDocHover() {
     const doc = document.querySelector(".doc")!
@@ -94,26 +94,6 @@ export class Main extends LitElement {
     doc?.remove()
 
     this.frame = doc as HTMLDivElement;
-
-    // this.frame.onclick = (e) => {
-    //   const element = e.target as HTMLElement;
-        
-    //   if (element.nodeName !== "P" &&
-    //     element.nodeName !== "a") {
-    //       return
-    //   }
-
-    //   this.giveStyles(element)
-    //   this.extractContent(element, true)
-
-    //   this.currentElementList.push({
-    //     reference: element,
-    //     isHovered: false,
-    //     isClicked: true,
-    //     pos: this.creatingMetricInputs,
-    //   })
-
-    // }
 
     this.frame.onmouseover = (e) => {
       const element = e.target as HTMLElement;
@@ -134,7 +114,6 @@ export class Main extends LitElement {
           pos: this.creatingMetricInputs,
         })
       }
-      
 
       this.currentElementList.forEach((curElement: any, _: number) => {
           curElement.reference.onmouseleave = () => {
@@ -150,20 +129,36 @@ export class Main extends LitElement {
             this.giveStyles(element)
             this.extractContent(element, true)
           }
-      })
-
-      
+      }) 
     }
-
 
     this.inserted = true;
   }
+
+  @property()
+  // @ts-ignore
+  metrics: Metric[] = structuredClone(dummyMetric)
+
+  async getAllMetrics() {
+
+    try {
+
+      this.metrics = await GetAllMetrics()
+    } catch(err) {
+
+    }
+  }
+
   connectedCallback(): void {
     super.connectedCallback()
 
     if (this.inserted) return; 
 
     setTimeout(this.onDocHover.bind(this), 0);
+
+    this.getAllMetrics()
+
+
   }
 
   removeSelectedElements() {
@@ -200,7 +195,7 @@ export class Main extends LitElement {
   }
 
   updateMetrics(e: any) {
-    this.metrics = e.detail.metrics;
+    this.creatingMetrics = e.detail.metrics;
   }
 
   addNewMetric(e: any) {
@@ -242,6 +237,7 @@ export class Main extends LitElement {
       .statistics=${this.statistics}
       .newMetric=${this.newMetric}
       slot="distilled"
+      .metrics=${this.metrics}
       ></distilled-component>`
     } else if (this.selectedTab === CreateMetric) {
       // tab = html` <slot name="create-metric"></slot>`
@@ -251,7 +247,7 @@ export class Main extends LitElement {
       .addMetricSteps=${this.addMetricSteps}
       .chosenMethod=${this.chosenMethod}
       .creatingMetricInputs=${this.creatingMetricInputs}
-      .metrics=${this.metrics}
+      .metrics=${this.creatingMetrics}
       >
       </create-metric-component>
       `
@@ -269,7 +265,6 @@ export class Main extends LitElement {
       return "Outside Source"
     }
   }
-
 
   render() {
     return html`

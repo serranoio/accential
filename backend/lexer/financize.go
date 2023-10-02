@@ -1,45 +1,18 @@
 package lexer
 
 import (
+	"backend/database"
 	"backend/parser"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/apaxa-go/eval"
+	"gorm.io/gorm"
 )
-
-type MeasureOfWorkingCapital struct {
-	TotalAssets      []int
-	TotalLiabilities []int
-	WorkingCapital   []float64
-	Info             string
-}
-
-type Statistics struct {
-	Mowc *MeasureOfWorkingCapital
-}
-
-func CreateStatistics() *Statistics {
-	return &Statistics{
-		Mowc: nil,
-	}
-}
-
-func (s *Statistics) AddMeasureOfWorkingCapital() {
-	s.Mowc = &MeasureOfWorkingCapital{
-		TotalAssets:      []int{},
-		TotalLiabilities: []int{},
-		WorkingCapital:   []float64{},
-		Info:             "",
-	}
-}
-
-func (s *Statistics) initAllStatistics() {
-	s.AddMeasureOfWorkingCapital()
-
-}
 
 func cleanData(column string) int {
 	column = strings.ReplaceAll(column, ",", "")
@@ -54,40 +27,83 @@ func cleanData(column string) int {
 	return i
 }
 
-func (s *Statistics) checkForMeasureOfWorkingCapital(tr string, td parser.Td) {
-	if tr == "Total Assets" {
-		for _, column := range td {
-			data := cleanData(column)
-			if data > 0 {
-				s.Mowc.TotalAssets = append(s.Mowc.TotalAssets, data)
-			}
-		}
-	} else if tr == "Total Liabilities" {
-		for _, column := range td {
-			data := cleanData(column)
-			if data > 0 {
-				s.Mowc.TotalLiabilities = append(s.Mowc.TotalLiabilities, data)
-			}
-		}
-	}
-}
-
-func (s *Statistics) calculateAll() {
-	for i := 0; i < len(s.Mowc.TotalAssets); i++ {
-		s.Mowc.WorkingCapital = append(
-			s.Mowc.WorkingCapital,
-			float64(s.Mowc.TotalAssets[i])/float64(s.Mowc.TotalLiabilities[i]))
-	}
-
-	s.Mowc.Info = "The Measure of Working Capital is the Ratio of Total Assets / Total Liablities"
-}
-
-type Metric struct {
+type Submetric struct {
+	ID          uint `gorm:"primaryKey"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	MetricID    uint
 	Label       string
 	Value       float64
 	Explanation string
 	Operation   string
-	Metric      []*Metric
+}
+
+func (sm Submetric) MarshalJSON() ([]byte, error) {
+
+	basicLink := &struct {
+		ID          uint    `json:"id"`
+		CreatedAt   string  `json:"createdat"`
+		UpdatedAt   string  `json:"updatedat"`
+		DeletedAt   string  `json:"deletedat"`
+		Label       string  `json:"label"`
+		Value       float64 `json:"value"`
+		Explanation string  `json:"explanation"`
+		Operation   string  `json:"operation"`
+	}{
+		ID:          sm.ID,
+		CreatedAt:   sm.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:   sm.UpdatedAt.Format("2006-01-02 15:04:05"),
+		DeletedAt:   sm.DeletedAt.Time.String(),
+		Label:       sm.Label,
+		Value:       sm.Value,
+		Explanation: sm.Explanation,
+		Operation:   sm.Operation,
+	}
+
+	return json.Marshal(basicLink)
+}
+
+type Metric struct {
+	ID          uint `gorm:"primaryKey"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	Label       string
+	Value       float64
+	Explanation string
+	Operation   string
+	Rating      int
+	Submetric   []*Submetric `gorm:"foreignKey:MetricID"`
+}
+
+func (m Metric) MarshalJSON() ([]byte, error) {
+
+	basicLink := &struct {
+		ID          uint         `json:"id"`
+		CreatedAt   string       `json:"createdat"`
+		UpdatedAt   string       `json:"updatedat"`
+		DeletedAt   string       `json:"deletedat"`
+		Label       string       `json:"label"`
+		Value       float64      `json:"value"`
+		Explanation string       `json:"explanation"`
+		Operation   string       `json:"operation"`
+		Rating      int          `json:"rating"`
+		Submetric   []*Submetric `json:"submetric"`
+	}{
+		ID:          m.ID,
+		CreatedAt:   m.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:   m.UpdatedAt.Format("2006-01-02 15:04:05"),
+		DeletedAt:   m.DeletedAt.Time.String(),
+		Label:       m.Label,
+		Value:       m.Value,
+		Explanation: m.Explanation,
+		Operation:   m.Operation,
+		Rating:      m.Rating,
+		Submetric:   m.Submetric,
+	}
+
+	return json.Marshal(basicLink)
 }
 
 func testMetric() []*Metric {
@@ -98,21 +114,20 @@ func testMetric() []*Metric {
 		Value:       0,
 		Explanation: "This is the Total Assets / Total Liabilities",
 		Operation:   "(a/a)",
-		Metric: []*Metric{
+		Rating:      0,
+		Submetric: []*Submetric{
 
-			&Metric{
+			&Submetric{
 				Label:       "Total Assets",
 				Value:       0,
 				Explanation: "Total assets is...",
 				Operation:   "/",
-				Metric:      nil,
 			},
-			&Metric{
+			&Submetric{
 				Label:       "Total Liabilities",
 				Value:       0,
 				Explanation: "Total liabilities is...",
 				Operation:   "",
-				Metric:      nil,
 			},
 		},
 	}
@@ -122,21 +137,20 @@ func testMetric() []*Metric {
 		Value:       0,
 		Explanation: "This is the Total Assets / Total Liabilities",
 		Operation:   "(a/a)",
-		Metric: []*Metric{
+		Rating:      0,
+		Submetric: []*Submetric{
 
-			&Metric{
+			&Submetric{
 				Label:       "Total Revenue",
 				Value:       0,
 				Explanation: "Total assets is...",
 				Operation:   "/",
-				Metric:      nil,
 			},
-			&Metric{
+			&Submetric{
 				Label:       "Total Expenses",
 				Value:       0,
 				Explanation: "Total liabilities is...",
 				Operation:   "",
-				Metric:      nil,
 			},
 		},
 	}
@@ -146,21 +160,20 @@ func testMetric() []*Metric {
 		Value:       0,
 		Explanation: "This is the Total Assets / Total Liabilities",
 		Operation:   "(a/a)",
-		Metric: []*Metric{
+		Rating:      0,
+		Submetric: []*Submetric{
 
-			&Metric{
+			&Submetric{
 				Label:       "Taxes payable",
 				Value:       0,
 				Explanation: "Total income is...",
 				Operation:   "/",
-				Metric:      nil,
 			},
-			&Metric{
+			&Submetric{
 				Label:       "Net income",
 				Value:       0,
 				Explanation: "Taxes...",
 				Operation:   "",
-				Metric:      nil,
 			},
 		},
 	}
@@ -170,14 +183,13 @@ func testMetric() []*Metric {
 		Value:       0,
 		Explanation: "This is the Total Assets / Total Liabilities",
 		Operation:   "a",
-		Metric: []*Metric{
-
-			&Metric{
+		Rating:      0,
+		Submetric: []*Submetric{
+			&Submetric{
 				Label:       "Operating income",
 				Value:       0,
 				Explanation: "Total income is...",
 				Operation:   "",
-				Metric:      nil,
 			},
 		},
 	}
@@ -215,7 +227,7 @@ func createMetrics(allMetrics []*Metric, tables []*parser.Table) []*Metric {
 		for tr, td := range v.Tr {
 
 			for _, metric := range allMetrics {
-				for _, subMetric := range metric.Metric {
+				for _, subMetric := range metric.Submetric {
 					if subMetric.Label == tr {
 						for _, column := range td {
 							data := cleanData(column)
@@ -239,7 +251,7 @@ func createMetrics(allMetrics []*Metric, tables []*parser.Table) []*Metric {
 		char, fullOperation = trimLeftChar(fullOperation)
 		currentMetric := 0
 		for char != "" {
-			subMetric := metric.Metric[currentMetric]
+			subMetric := metric.Submetric[currentMetric]
 
 			if char == "(" {
 				executionString += "("
@@ -277,10 +289,36 @@ func createMetrics(allMetrics []*Metric, tables []*parser.Table) []*Metric {
 	return allMetrics
 }
 
+func initDB(metrics []*Metric) {
+	database.Db.AutoMigrate(&Metric{})
+	database.Db.AutoMigrate(&Submetric{})
+
+	ok := database.Db.Create(metrics)
+
+	fmt.Println(ok)
+}
+
+func getAll() []*Metric {
+	metrics := []*Metric{}
+
+	records := database.Db.Model(&Metric{}).Preload("Submetric").Find(&metrics)
+
+	if records.Error != nil {
+		log.Panic(records.Error)
+	}
+
+	return metrics
+}
+
 func processTables(tables []*parser.Table) []*Metric {
+	// var buf bytes.Buffer // execute template on byte buffer
 
-	allMetrics := createMetrics(testMetric(), tables)
+	// metrics := testMetric()
+	metrics := getAll()
 
+	createMetrics(metrics, tables)
+
+	// initDB(metrics)
 	// statistics := CreateStatistics()
 	// statistics.initAllStatistics()
 
@@ -293,5 +331,5 @@ func processTables(tables []*parser.Table) []*Metric {
 
 	// statistics.calculateAll()
 
-	return allMetrics
+	return metrics
 }

@@ -74,19 +74,19 @@ constructor() {
 
   getMetric(position: number, metrics: Metric[]): string {
     if (position === metrics.length - 1) {
-        return String(metrics[position].Value)
+        return String(metrics[position].value)
     }
 
-    if (metrics[position].Operation === "+") {
-      return metrics[position].Value + "+" + this.getMetric(position+1, metrics);  
-    } else if (metrics[position].Operation === "-") {
-      return metrics[position].Value + "-" + this.getMetric(position+1, metrics);  
-    } else if (metrics[position].Operation === "x") {
-      return metrics[position].Value + "*" + this.getMetric(position+1, metrics);  
-    } else if (metrics[position].Operation === "/") {
-      return metrics[position].Value + "/" + this.getMetric(position+1, metrics);  
+    if (metrics[position].operation === "+") {
+      return metrics[position].value + "+" + this.getMetric(position+1, metrics);  
+    } else if (metrics[position].operation === "-") {
+      return metrics[position].value + "-" + this.getMetric(position+1, metrics);  
+    } else if (metrics[position].operation === "x") {
+      return metrics[position].value + "*" + this.getMetric(position+1, metrics);  
+    } else if (metrics[position].operation === "/") {
+      return metrics[position].value + "/" + this.getMetric(position+1, metrics);  
     } else {
-      return String(metrics[position].Value);
+      return String(metrics[position].value);
     }
 
 
@@ -97,11 +97,11 @@ constructor() {
   }
 
   doTheMath(e: any) {
-    this.metric.Value = eval(e.target.querySelector("#Value").value)
-    this.metric.Label = e.target.querySelector("#Label").value
-    this.metric.Explanation = e.target.querySelector("#Explanation").value
+    this.metric.value = eval(e.target.querySelector("#Value").value)
+    this.metric.label = e.target.querySelector("#Label").value
+    this.metric.explanation = e.target.querySelector("#Explanation").value
     
-    this.metric.Rating = e.target.querySelector("#Rating").value
+    this.metric.rating = e.target.querySelector("#Rating").value
 
 
     this.dispatchEvent(new CustomEvent("add-new-metric", {
@@ -126,14 +126,14 @@ constructor() {
       
       if (count % 4 === 0) {  // 0 mod 4 == 0
         curMetric++;
-        this.metrics[curMetric].Label = input.value
+        this.metrics[curMetric].label = input.value
       } else if (count % 4 === 1) {  // 1 mod 4 === 1
-        this.metrics[curMetric].Value = Number(input.value)
+        this.metrics[curMetric].value = Number(input.value)
       } else if (count % 4 === 2) {  // 2 mod 4 === 2
-        this.metrics[curMetric].Explanation = input.value
+        this.metrics[curMetric].explanation = input.value
       } else if (count % 4 === 3) {  // 3 mod 4 === 3
         if (curMetric < this.metrics.length - 1) {  // not the last one
-          this.metrics[curMetric].Operation = input.value
+          this.metrics[curMetric].operation = input.value
         }
         
       }
@@ -343,7 +343,7 @@ constructor() {
             </label>
             <input
             type="text"
-            value=${curMetric.Label}
+            value=${curMetric.label}
               placeholder="Label"/>
             </div>
             
@@ -356,7 +356,7 @@ constructor() {
             </label>
             <input
             type="number"
-            value=${curMetric.Value === -1 ? 0 : curMetric.Value}
+            value=${curMetric.value === -1 ? 0 : curMetric.value}
               placeholder="Value"/>
             </div>
             
@@ -369,7 +369,7 @@ constructor() {
             </label>
             <input
             
-            value=${curMetric.Explanation}
+            value=${curMetric.explanation}
              type="text"
               placeholder="Explanation"/>
             </div>

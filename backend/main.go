@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+
 	go parser.InitParser()
 	go lexer.InitLexer()
 	go converter.InitConverter()

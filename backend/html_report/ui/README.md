@@ -83,3 +83,41 @@ Add tags to the metric name:
     includes metric from doc
 
 
+
+
+2 ways:
+
+Try to feed metrics regularly
+
+make dummy components
+
+Now:
+
+Made dummy component
+
+Do:
+
+<div class="metrics">  // metrics
+    <figure>  // metric
+        <p>
+        <p>
+        <p>
+        <p>
+    </figure>
+    <figure>  // metric
+        <p>
+        <p>
+        <p>
+        <p>
+    </figure>
+</div>
+
+<figure class="doc">
+
+</figure>
+
+DIVISION BY 0 ERROR
+
+COMPARE EVERYTHING TO LOWER CASE
+
+

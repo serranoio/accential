@@ -30,13 +30,13 @@ export class DocComponent extends LitElement {
   }
 
   getValue(): string {
-    return this.creatingMetricFromDocument.Value === -1 ?
+    return this.creatingMetricFromDocument.value === -1 ?
     "" :
-    String(this.creatingMetricFromDocument.Value);
+    String(this.creatingMetricFromDocument.value);
   }
 
   getLabel(): string {
-    const label = this.creatingMetricFromDocument.Label;
+    const label = this.creatingMetricFromDocument.label;
 
     return label.length > 8 ? label.slice(0,8) + "..." : String(label); 
   }
