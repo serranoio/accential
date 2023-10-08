@@ -34,7 +34,7 @@ func temp() {
 		log.Fatal(err)
 	}
 
-	file, err := os.Open(path.Join(currentWorkingDirectory, "10-k-second.html"))
+	file, err := os.Open(path.Join(currentWorkingDirectory, "bio.htm"))
 
 	bytes, err := io.ReadAll(file)
 

@@ -95,3 +95,11 @@ send back
 The add metric route needs to include the document ID to be added to the document ID
 
 add order to save submetrics
+
+
+
+// breakpoint at line 103
+
+// when you find td, you consume next text token which is the contents
+
+// don't consume next contents

@@ -96,12 +96,14 @@ func getToken(tokenizer *html.Tokenizer, findTagNames []string, findText bool, e
 		return []byte(""), nil
 	} else if includes(findTagNames, tn) && !findText { // found text box
 
-		return getToken(tokenizer, []string{"td"}, true, endTagNames)
-	} else if findText { // get contents in textbox
-		// find everything within td
-
+		// return getToken(tokenizer, []string{"td"}, true, endTagNames)
 		return getContents(tokenizer, []string{"td"}, []byte{}), nil
 	}
+	// else if findText { // get contents in textbox
+	// 	// find everything within td
+
+	// 	return getContents(tokenizer, []string{"td"}, []byte{}), nil
+	// }
 
 	return getToken(tokenizer, findTagNames, findText, endTagNames)
 }
@@ -132,7 +134,7 @@ func recurse(tokenizer *html.Tokenizer, tables []*Table, depth *int) []*Table {
 			trString := comm.CleanString(Tr)
 			table.addTr(trString)
 
-			if trString == "totalliabilitiesandequity" {
+			if trString == "totalequity" {
 				fmt.Println("gey")
 			}
 
