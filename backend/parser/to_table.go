@@ -88,10 +88,12 @@ func getToken(tokenizer *html.Tokenizer, findTagNames []string, findText bool, e
 	tnUnclean, _ := tokenizer.TagName()
 	tn := comm.CleanString(tnUnclean)
 	if includes(endTagNames, tn) &&
-		tt == html.EndTagToken ||
-		findText && includes(findTagNames, tn) { // base case
+		tt == html.EndTagToken { // base case
 
 		return nil, errors.New(fmt.Sprintf("end of %s", endTagNames))
+	} else if findText && includes(findTagNames, tn) {
+
+		return []byte(""), nil
 	} else if includes(findTagNames, tn) && !findText { // found text box
 
 		return getToken(tokenizer, []string{"td"}, true, endTagNames)
@@ -123,7 +125,7 @@ func recurse(tokenizer *html.Tokenizer, tables []*Table, depth *int) []*Table {
 		tables, table = newTable(tables)
 
 		for { // for every row
-			Tr, err := getToken(tokenizer, []string{"tr"}, false, []string{"table"})
+			Tr, err := getToken(tokenizer, []string{"td"}, false, []string{"table"})
 			if err != nil {
 				break
 			}

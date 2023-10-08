@@ -34,7 +34,7 @@ func temp() {
 		log.Fatal(err)
 	}
 
-	file, err := os.Open(path.Join(currentWorkingDirectory, "practice-2.html"))
+	file, err := os.Open(path.Join(currentWorkingDirectory, "10-k-second.html"))
 
 	bytes, err := io.ReadAll(file)
 
@@ -45,9 +45,9 @@ func temp() {
 }
 
 func InitAPI() {
-	temp()
+	// temp()
 
-	// createApi()
+	createApi()
 }
 
 func processReport(fileAndMetric *FileAndMetric) uint {
