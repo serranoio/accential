@@ -4,29 +4,41 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Lit + TS</title>
+    <title>Report</title>
     
     
-    <script type="module" crossorigin src="/assets/index-0dd1f3c1.js"></script>
+    {{/* <script type="module" crossorigin src="/assets/index-0dd1f3c1.js"></script> */}}
 
     <script type="module"
     crossorigin
-    >
-    {{ .HydratedJS }}
+    >{{ .HydratedJS }}</script>
 
-    </script>
+    <style>{{ .HydratedCSS }}</style>
 
-    <style>
-    
-    {{ .HydratedCSS }}
-
-    </style>
-
-    <link rel="stylesheet" href="/assets/index-20d54353.css">
+    {{/* <link rel="stylesheet" href="/assets/index-20d54353.css"> */}}
   </head>
   <body>
+    <p style="display: none" id="doc-id">{{ .ID }}</p>
+
+    <div style="display: none" class="metrics">
+    {{- with .Metrics -}}
+    {{- range .}}
+    <figure>
+      <p>{{ .Label }}</p>
+      <p>{{ .Value }}</p>
+      <p>{{ .Explanation }}</p>
+      <p>{{ .Operation }}</p>
+    </figure>
+    {{- end }}
+    {{- end }}
+    </div>
+
+    <figure class="doc">
+      {{ .Document }}
+    </figure>
 
     <main-component>
+
     </main-component>
 
   </body>

@@ -1,8 +1,8 @@
 package html_report
 
 import (
-	"backend/api"
-	"backend/lexer"
+	"backend/comm"
+	"backend/database"
 	"bytes"
 	"fmt"
 	"io/fs"
@@ -14,16 +14,17 @@ import (
 	"text/template"
 )
 
-type Document struct {
+type HydrateDocument struct {
 	HydratedJS  string
 	HydratedCSS string
-	Metrics     []*lexer.Metric
 	Fun         string
 	Document    string
+	Metrics     []*comm.Metric
+	ID          string
 }
 
-func createDocument() *Document {
-	return &Document{
+func createHydrateDocument() *HydrateDocument {
+	return &HydrateDocument{
 		HydratedJS:  "",
 		HydratedCSS: "",
 		Metrics:     nil,
@@ -64,7 +65,7 @@ func getFile(lookForName string, fileNames []string) string {
 	return "failed"
 }
 
-func (d *Document) hydrateAssets() {
+func (d *HydrateDocument) hydrateAssets() {
 	names := getFileNames()
 
 	jsBytes, err := os.ReadFile(getFile(".js", names))
@@ -80,28 +81,29 @@ func (d *Document) hydrateAssets() {
 	d.HydratedJS = string(jsBytes)
 }
 
-func createReport(metrics []*lexer.Metric) {
-
-	document := createDocument()
-
+func createReport(metrics []*comm.Metric, htmlReport []byte) uint {
+	document := createHydrateDocument()
 	document.hydrateAssets()
 	document.Metrics = metrics
+	document.Document = string(htmlReport)
+	// get id from database document, put it in hydration.
+	documentToSave := &comm.Document{}
+	database.Db.Save(documentToSave)
+	document.ID = fmt.Sprintf("%d", documentToSave.ID)
 
-	document.Document = string(api.Document)
-
-	var byteBuf bytes.Buffer // execute template on byte buffer
-
+	// execute template on byte buffer
+	var byteBuf bytes.Buffer
 	dir, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	fullPath := path.Join(dir, "html_report", "templates", "index.gohtml")
-
 	tmpl := template.Must(template.ParseFiles(fullPath))
-
 	tmpl.Execute(&byteBuf, document)
 
-	os.WriteFile("report.html", byteBuf.Bytes(), 0664)
+	reportBytes := byteBuf.Bytes()
+	os.WriteFile("report.html", reportBytes, 0664)
 	log.Println("File Written")
+
+	return database.SaveDocument(reportBytes, metrics, documentToSave.ID)
 }

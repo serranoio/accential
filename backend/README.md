@@ -41,3 +41,57 @@ Study
 
 ### LATER
  create notification channel
+
+In rust:
+ 2. Add 3 steps:
+    1. Choose a Company
+    2. Choose metrics
+    3. Send
+- 1. Choose document
+    - show available documents
+        - create get all documents endpoint
+    - or upload manually
+- 2. Choose metrics
+- 3. Send :}
+2. Update post request to include metrics
+ Use serde to serialize a struct from rust into json, include metrics and 
+ file
+
+ 3. Make sure your document is saved
+
+ 4. Now we can make tablizer better.
+ 5. include <font> in 
+
+
+### 1
+
+POSS... 
+in "Choose Saved"
+adding metric will make post request instead of get request to 
+add metrics ???
+problem is that you will have to use financer again on tablizer
+
+
+get document
+
+get reportBytes...
+process it using tablizer
+
+Financizer with THOSE metrics to add.
+
+theres no need to call create_report
+
+just populate metrics with doc
+
+
+document.metrics = append(document.metrics, InitFinancer()); 
+
+save
+
+send back
+
+### 2
+
+The add metric route needs to include the document ID to be added to the document ID
+
+add order to save submetrics

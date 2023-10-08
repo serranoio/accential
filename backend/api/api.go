@@ -1,89 +1,64 @@
 package api
 
 import (
+	"backend/comm"
 	"backend/database"
-	"backend/lexer"
+	finance "backend/financizer"
+	"backend/html_report"
+	"backend/parser"
 	helpers "backend/rabbitmq"
 	"encoding/json"
 	"net/http"
+	"os"
+	"strings"
 
 	// "encoding/base64"
 	"io"
 	"log"
-	"os"
 	"path"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/rabbitmq/amqp091-go"
 )
 
-var msgs <-chan amqp091.Delivery
-
-func listenForHtmlReport(communication *helpers.Communication) {
-	communication.AddConsumingEQ(helpers.EQ_HTML_REPORT, "topic")
-
-	msgs = communication.ConsumeEQ(helpers.EQ_HTML_REPORT)
-
-	// go func() {
-	// 	for d := range msgs {
-	// 		log.Printf("api: Received a message: %s", d.Body)
-	// 		time.Sleep(0 * time.Second)
-	// 	}
-	// }()
-
-	// log.Printf("api [*] Waiting for messages. To exit press CTRL+C")
+type FileAndMetric struct {
+	File   string
+	Metric string
 }
 
-func InitAPI() {
-	database.InitDatabase()
-
-	communication := helpers.CreateCommunication()
-	defer communication.Channel.Close()
-	defer communication.Connection.Close()
-
-	go listenForHtmlReport(communication)
-
-	time.Sleep(1 * time.Second)
-
-	communication.AddPublshingEQ(helpers.EQ_PDF, "topic")
-	defer communication.Context.Cancel()
-
-	temp(communication)
-
-	createApi(communication)
-
-}
-
-var Document []byte
-
-func temp(communication *helpers.Communication) {
+func temp() {
 
 	currentWorkingDirectory, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	file, err := os.Open(path.Join(currentWorkingDirectory, "10-k-example.html"))
-
-	helpers.FailOnError(err, "file open")
+	file, err := os.Open(path.Join(currentWorkingDirectory, "practice-2.html"))
 
 	bytes, err := io.ReadAll(file)
 
-	helpers.FailOnError(err, "file read")
+	processReport(&FileAndMetric{
+		File:   string(bytes),
+		Metric: "Status",
+	})
+}
 
-	Document = bytes
+func InitAPI() {
+	temp()
 
-	// send to lexer
-	communication.PublishToEQ(helpers.EQ_PDF, bytes)
-	// send directly to create_report
+	// createApi()
+}
 
+func processReport(fileAndMetric *FileAndMetric) uint {
+	t := parser.InitParser([]byte(fileAndMetric.File))
+	m := finance.InitFinancer(t, fileAndMetric.Metric)
+	return html_report.InitHtmlReport(m, []byte(fileAndMetric.File))
 }
 
 const API = "api"
 
-func createApi(communication *helpers.Communication) {
+func createApi() {
 
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
@@ -96,23 +71,174 @@ func createApi(communication *helpers.Communication) {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.POST(path.Join(API, "document"), func(c *gin.Context) {
+	r.POST(path.Join(API, "post", "document", "add-metrics"), func(c *gin.Context) {
 		bytes, err := io.ReadAll(c.Request.Body)
 		helpers.FailOnError(err, "failed to parse")
 
-		communication.PublishToEQ(helpers.EQ_PDF, bytes)
+		fileAndMetric := &FileAndMetric{}
+		err = json.Unmarshal(bytes, fileAndMetric)
 
-		// at the end when we receive everything
+		if err != nil || fileAndMetric.File == "" {
+			c.JSON(http.StatusOK, gin.H{
+				"message": "failed to add metrics to document",
+			})
+			return
+		}
 
-		delivery := <-msgs // we wait for channel to finish
+		// get document
+		document := &comm.Document{}
+		database.Db.Model(comm.Document{}).Preload("Metrics").Find(document, fileAndMetric.File)
+		// get metrics
+		t := parser.InitParser(document.Report)
+		moreMetrics := finance.InitFinancer(t, fileAndMetric.Metric)
+		// add metrics to document and save it
+		database.CloneMetrics(moreMetrics)
+		document.Metrics = append(document.Metrics, moreMetrics...)
+		database.Db.Save(document)
 
 		c.JSON(http.StatusOK, gin.H{
-			"document is done": string(delivery.Body),
+			"id": document.ID,
 		})
-		log.Println("Message sent")
+		log.Println("Document id sent")
 	})
 
-	r.POST(path.Join(API, "metric", "add"), func(c *gin.Context) {
+	r.POST(path.Join(API, "post", "document"), func(c *gin.Context) {
+		bytes, err := io.ReadAll(c.Request.Body)
+		helpers.FailOnError(err, "failed to parse")
+
+		fileAndMetric := &FileAndMetric{}
+		err = json.Unmarshal(bytes, fileAndMetric)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "failed to parse",
+			})
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"id": processReport(fileAndMetric),
+		})
+		log.Println("Document id sent")
+	})
+
+	type NewDoc struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	}
+
+	r.POST(path.Join(API, "post", "document", "change-name"), func(c *gin.Context) {
+		bytes, err := io.ReadAll(c.Request.Body)
+		helpers.FailOnError(err, "failed to parse")
+
+		newDoc := &NewDoc{}
+		err = json.Unmarshal(bytes, newDoc)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "did not send id",
+			})
+		}
+
+		document := &comm.Document{}
+		database.Db.Model(comm.Document{}).Find(document, newDoc.ID)
+		document.Name = newDoc.Name
+		database.Db.Save(document)
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "success",
+		})
+	})
+
+	type Id struct {
+		ID string `json:"id"`
+	}
+
+	r.POST(path.Join(API, "post", "document", "get-name"), func(c *gin.Context) {
+		bytes, err := io.ReadAll(c.Request.Body)
+		helpers.FailOnError(err, "failed to parse")
+
+		id := &Id{}
+		err = json.Unmarshal(bytes, id)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "did not send id",
+			})
+		}
+
+		document := &comm.Document{}
+		database.Db.Model(comm.Document{}).Find(document, id.ID)
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": document.Name,
+		})
+	})
+
+	r.GET(path.Join(API, "get", "document/", ":id"), func(c *gin.Context) {
+		// retrieve document with id
+		id := strings.ReplaceAll(c.Param("id"), "\"", "")
+		nextId := strings.ReplaceAll(id, "$", "")
+
+		document := &comm.Document{}
+		database.Db.Model(comm.Document{}).Find(document, nextId)
+
+		c.Data(http.StatusOK, "text/html; charset=utf-8", document.Report)
+	})
+
+	r.GET(path.Join(API, "get", "document/", "all"), func(c *gin.Context) {
+		// retrieve all document ID's
+
+		documents := []*comm.Document{}
+
+		database.Db.Model(&comm.Document{}).Find(&documents).Select("ID")
+
+		ids := []uint{}
+		names := []string{}
+
+		for _, doc := range documents {
+
+			ids = append(ids, doc.ID)
+			names = append(names, doc.Name)
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"ids":   ids,
+			"names": names,
+		})
+	})
+
+	r.GET(path.Join(API, "get", "metrics", "all"), func(c *gin.Context) {
+		var allTags []comm.Tag
+
+		database.Db.Find(&allTags)
+
+		ids := []uint{}
+		names := []string{}
+
+		for _, tag := range allTags {
+			foundName := false
+			for _, name := range names {
+				if tag.Name == name {
+					foundName = true
+				}
+			}
+			if !foundName {
+				ids = append(ids, tag.ID)
+				names = append(names, tag.Name)
+
+			}
+
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"ids":   ids,
+			"names": names,
+		})
+
+	})
+
+	// this is currently for ALL documents. Make it for specific document
+	r.POST(path.Join(API, "metric", "add", ":docid"), func(c *gin.Context) {
 		bytes, err := io.ReadAll(c.Request.Body)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -120,11 +246,21 @@ func createApi(communication *helpers.Communication) {
 			})
 		}
 
-		metric := &lexer.Metric{}
-
+		// get metric & update it with ID
+		metric := &comm.Metric{}
 		err = json.Unmarshal(bytes, &metric)
-
-		database.Db.Create(metric)
+		metrics := []*comm.Metric{metric}
+		database.CloneMetrics(metrics)
+		// get old metrics
+		document := comm.Document{}
+		database.Db.Model(&comm.Document{}).
+			Preload("Metrics").
+			Preload("Metrics.Submetric").
+			First(&document, c.Param("docid"))
+		// combine them
+		document.Metrics = append(document.Metrics, metrics...)
+		// save it all
+		database.Db.Save(document)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -137,14 +273,17 @@ func createApi(communication *helpers.Communication) {
 		})
 	})
 
-	r.GET(path.Join(API, "metric", "get"), func(c *gin.Context) {
+	r.GET(path.Join(API, "metric", "get", ":docid"), func(c *gin.Context) {
 
-		metrics := []*lexer.Metric{}
+		document := comm.Document{}
 
-		database.Db.Find(&metrics)
+		database.Db.Model(&comm.Document{}).
+			Preload("Metrics").
+			Preload("Metrics.Submetric").
+			First(&document, c.Param("docid"))
 
 		c.JSON(http.StatusOK, gin.H{
-			"message": metrics,
+			"message": document.Metrics,
 		})
 
 	})

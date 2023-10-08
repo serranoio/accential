@@ -3,17 +3,35 @@ export interface Metric {
     value: number,
     explanation: String,
     operation: String | null,
-    metrics: Metric[],
+    submetric: Submetric[],
     rating: number,
 }
+
+
+export interface Submetric {
+    label: String,
+    value: number,
+    explanation: String,
+    operation: String | null,
+    order: number,
+}
+
 
 export let dummyMetric: Metric = {
     label: "",
     value: -1,
     explanation: "",
     operation: null,
-    metrics: [],
+    submetric: [],
     rating: -1,
+}
+
+export let dummySubmetric: Submetric = {
+    label: "asd",
+    value: 0,
+    explanation: "",
+    operation: "",
+    order: 0,
 }
 
 export const evaluateMetric = "evaluate-metric";

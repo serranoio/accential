@@ -10,6 +10,7 @@ import { CreateMetric, Distilled, Doc } from './model/tabs';
 import { SetSelectedTab } from './model/events';
 import { AddMetricSteps, CreateMetricOptions, LabelValueSteps, Metric, dummyMetric } from './model/metric';
 import { GetAllMetrics } from './model/api';
+import { getDocId } from './model/util';
 
 @customElement('main-component')
 export class Main extends LitElement {
@@ -99,7 +100,8 @@ export class Main extends LitElement {
       const element = e.target as HTMLElement;
         
       if (element.nodeName !== "P" &&
-        element.nodeName !== "a") {
+        element.nodeName !== "a" &&
+        element.nodeName !== "FONT") {
           return
       }
 
@@ -143,7 +145,7 @@ export class Main extends LitElement {
 
     try {
 
-      this.metrics = await GetAllMetrics()
+      this.metrics = await GetAllMetrics(getDocId())
     } catch(err) {
 
     }
@@ -194,7 +196,7 @@ export class Main extends LitElement {
     this.creatingMetricInputs = e.detail.creatingMetricInputs
   }
 
-  updateMetrics(e: any) {
+  updateSubmetrics(e: any) {
     this.creatingMetrics = e.detail.metrics;
   }
 
@@ -203,6 +205,7 @@ export class Main extends LitElement {
 
     this.requestUpdate()
   }
+
 
   constructor() {
     super()
@@ -213,16 +216,14 @@ export class Main extends LitElement {
     document.addEventListener("MetricSteps", this.changeStep.bind(this))
     document.addEventListener("creating-metric-inputs", this.setCreatingMetricInputs.bind(this))
     document.addEventListener("add-new-metric", this.addNewMetric.bind(this))
-    document.addEventListener("update-metrics", this.updateMetrics.bind(this))
+    document.addEventListener("update-submetrics", this.updateSubmetrics.bind(this))
+
   }
 
   getMain() {
     let tab: TemplateResult = html``;
 
     if (this.selectedTab === Doc) {
-
-      // tab = html` <slot name="doc"></slot>`
-      
       tab =  html`<doc-component
       slot="doc"
       .frame="${this.frame}"
@@ -231,7 +232,6 @@ export class Main extends LitElement {
       >
       </doc-component>`
     } else if (this.selectedTab === Distilled) {
-      // tab = html` <slot name="distilled"></slot>`
       tab = html`
       <distilled-component
       .statistics=${this.statistics}
@@ -240,14 +240,13 @@ export class Main extends LitElement {
       .metrics=${this.metrics}
       ></distilled-component>`
     } else if (this.selectedTab === CreateMetric) {
-      // tab = html` <slot name="create-metric"></slot>`
       tab = html`
       <create-metric-component
       slot="create"
       .addMetricSteps=${this.addMetricSteps}
       .chosenMethod=${this.chosenMethod}
       .creatingMetricInputs=${this.creatingMetricInputs}
-      .metrics=${this.creatingMetrics}
+      .submetrics=${this.creatingMetrics}
       >
       </create-metric-component>
       `
@@ -272,6 +271,7 @@ export class Main extends LitElement {
     <main>
     <nav-bar
     .selectedTab=${this.selectedTab}
+    .addMetricSteps=${this.addMetricSteps}
     >
     </nav-bar>
     

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"backend/comm"
 	"bytes"
 	"errors"
 	"fmt"
@@ -19,8 +20,8 @@ type Table struct {
 	TableName string
 }
 
-func (t *Table) addTr(name []byte) {
-	t.Tr[string(name)] = []string{}
+func (t *Table) addTr(name string) {
+	t.Tr[name] = []string{}
 }
 
 func (t *Table) addTableName(name []byte) {
@@ -33,8 +34,8 @@ func (t *Table) printTable() {
 	}
 }
 
-func (t *Table) addTd(currentTr []byte, content []byte) {
-	t.Tr[string(currentTr)] = append(t.Tr[string(currentTr)], string(content))
+func (t *Table) addTd(currentTr string, content string) {
+	t.Tr[currentTr] = append(t.Tr[currentTr], content)
 }
 
 // if we find the word assets in a row, we will then search for corresponding
@@ -67,8 +68,9 @@ func includes(findTagNames []string, tn string) bool {
 func getContents(tokenizer *html.Tokenizer, findTagNames []string, allText []byte) []byte {
 	tt := tokenizer.Next()
 
-	tn, _ := tokenizer.TagName()
-	if tt == html.EndTagToken && includes(findTagNames, string(tn)) {
+	tnUnclean, _ := tokenizer.TagName()
+	tn := comm.CleanString(tnUnclean)
+	if tt == html.EndTagToken && includes(findTagNames, tn) {
 		return allText
 	}
 
@@ -83,17 +85,20 @@ func getContents(tokenizer *html.Tokenizer, findTagNames []string, allText []byt
 func getToken(tokenizer *html.Tokenizer, findTagNames []string, findText bool, endTagNames []string) ([]byte, error) {
 	tt := tokenizer.Next()
 
-	tn, _ := tokenizer.TagName()
-	if includes(endTagNames, string(tn)) && tt == html.EndTagToken { // base case
+	tnUnclean, _ := tokenizer.TagName()
+	tn := comm.CleanString(tnUnclean)
+	if includes(endTagNames, tn) &&
+		tt == html.EndTagToken ||
+		findText && includes(findTagNames, tn) { // base case
 
 		return nil, errors.New(fmt.Sprintf("end of %s", endTagNames))
-	} else if includes(findTagNames, string(tn)) && !findText {
+	} else if includes(findTagNames, tn) && !findText { // found text box
 
-		return getToken(tokenizer, []string{"p", "span"}, true, endTagNames)
-	} else if findText && includes(findTagNames, string(tn)) {
-		// find everything within p
+		return getToken(tokenizer, []string{"td"}, true, endTagNames)
+	} else if findText { // get contents in textbox
+		// find everything within td
 
-		return getContents(tokenizer, []string{"p"}, []byte{}), nil
+		return getContents(tokenizer, []string{"td"}, []byte{}), nil
 	}
 
 	return getToken(tokenizer, findTagNames, findText, endTagNames)
@@ -102,42 +107,42 @@ func getToken(tokenizer *html.Tokenizer, findTagNames []string, findText bool, e
 func recurse(tokenizer *html.Tokenizer, tables []*Table, depth *int) []*Table {
 	// it currently goes to the SPAN first because a call to table will take first column
 	for { // for every table
-		Tr, err := getToken(tokenizer, []string{"table"}, false, []string{"body"})
+		tt := tokenizer.Next()
+		tnUnclean, _ := tokenizer.TagName()
 
-		if err != nil {
+		tn := comm.CleanString(tnUnclean)
+
+		if tn == "body" && tt == html.EndTagToken || tt == html.ErrorToken {
 			break
+		}
+		if tn != "table" {
+			continue
 		}
 
 		var table *Table
 		tables, table = newTable(tables)
 
-		table.addTableName(Tr)
-		table.addTr(Tr)
-
-		for { // for every td
-			p, err := getToken(tokenizer, []string{"td"}, false, []string{"tr"})
-
-			table.addTd(Tr, p)
+		for { // for every row
+			Tr, err := getToken(tokenizer, []string{"tr"}, false, []string{"table"})
 			if err != nil {
 				break
 			}
-		}
+			trString := comm.CleanString(Tr)
+			table.addTr(trString)
 
-		for { // for every row
-			Tr, err = getToken(tokenizer, []string{"tr"}, false, []string{"table"})
-			table.addTr(Tr)
-
-			if err != nil {
-				break
+			if trString == "totalliabilitiesandequity" {
+				fmt.Println("gey")
 			}
 
 			for { // for every td
 				p, err := getToken(tokenizer, []string{"td"}, false, []string{"tr"})
 
-				table.addTd(Tr, p)
 				if err != nil {
 					break
 				}
+
+				pString := comm.CleanString(p)
+				table.addTd(trString, pString)
 			}
 		}
 	}

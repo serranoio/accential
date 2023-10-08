@@ -6,12 +6,16 @@ const Get = "get"
 const Add = "add"
 // const All = "all"
 const Api = "api"
+const Document = "document"
+const ChangeName = "change-name"
+const GetName = "get-name"
+const Post = "post"
 
 const url = 'http://127.0.0.1:8080'
 
-export const GetAllMetrics = async () => {
+export const GetAllMetrics = async (id: string) => {
     try {
-        const metrics = await fetch(`${url}/${Api}/${Metrics}/${Get}`)
+        const metrics = await fetch(`${url}/${Api}/${Metrics}/${Get}/${id}`)
 
         const json = await metrics.json()
 
@@ -22,9 +26,9 @@ export const GetAllMetrics = async () => {
 
 }
 
-export const AddNewMetric = async (newMetric: Metric) => {
+export const AddNewMetric = async (newMetric: Metric, docId: string) => {
     try {
-        const metrics = await fetch(`${url}/${Api}/${Metrics}/${Add}`, {
+        const metrics = await fetch(`${url}/${Api}/${Metrics}/${Add}/${docId}`, {
             method: "POST",
             body: JSON.stringify(
               newMetric
@@ -41,4 +45,51 @@ export const AddNewMetric = async (newMetric: Metric) => {
         console.log(err)
     }
 
+}
+
+export const ChangeDocumentName = async (id: string, newName: string) => {
+    try {
+        const metrics = await fetch(`${url}/${Api}/${Post}/${Document}/${ChangeName}`, {
+            method: "POST",
+            body: JSON.stringify(
+                {
+                    id: id, 
+                    Name: newName,
+                }
+            ),
+        }
+        )
+
+        const json = await metrics.json()
+
+        console.log(json)
+
+        return json.message
+    } catch(err) {
+
+    }
+}
+
+export const FetchName = async (id: string) => {
+
+    try {
+        const metrics = await fetch(`${url}/${Api}/${Post}/${Document}/${GetName}`, 
+            {
+                method: "POST",
+                body: JSON.stringify(
+                     {
+                        id: id, 
+                    }
+                ),
+            }
+        )
+
+        const json = await metrics.json()
+
+    
+        return json.message
+    } catch(err) {
+
+    }
+    
 }

@@ -121,3 +121,9 @@ DIVISION BY 0 ERROR
 COMPARE EVERYTHING TO LOWER CASE
 
 
+
+
+To choose default metrics, when creating a document in post route, we will have default metrics (nothing)
+hitting the change metric route will update the value within  the document OR
+
+ONE ROUTE, and we send multiple value ;)

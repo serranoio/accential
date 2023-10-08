@@ -7,6 +7,7 @@ import "./metric/metric"
 import "./create-metric/create-metric.component"
 import { Metric, dummyMetric } from '../../model/metric';
 import { AddNewMetric } from '../../model/api';
+import { getDocId } from '../../model/util';
 
 @customElement('distilled-component')
 export class DistilledComponent extends LitElement {
@@ -65,7 +66,7 @@ export class DistilledComponent extends LitElement {
 
   addNewMetric() {
     if (this.newMetric !== dummyMetric && !this.metrics.includes(this.newMetric)) {
-      AddNewMetric(this.newMetric)
+      AddNewMetric(this.newMetric, getDocId())
       this.metrics.push(this.newMetric)
     }
   }
@@ -105,7 +106,6 @@ export class DistilledComponent extends LitElement {
         </table> 
         
         ${this.metrics.map((metric: Metric) => {
-          console.log(this.metrics)
 
           return html`
           <metric-component

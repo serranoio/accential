@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: NeueMachina;
   line-height: 1.5;
   font-weight: 400;
 
@@ -64,6 +64,7 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  font-family: NeueMachina;
 }
 
 html {
@@ -79,6 +80,11 @@ h2,
 h3,
 p {
   color: var(--gary80);
+  /* font-family: Arial !important; */
+}
+
+input {
+  font-family: NeueMachina !important;
 }
 
 
@@ -91,4 +97,11 @@ p {
 .highlighted {
   box-shadow: 0 0 0 2px green;
   font-size: 40px;
+}
+
+@font-face {
+  font-family: NeueMachina;
+  src: url('../public/fonts/NeueMachina-Regular.otf');
+  font-weight: normal;
+  font-style: normal;
 }

@@ -17,6 +17,11 @@ export default css`
     box-sizing: border-box;
 }
 
+button, input {
+    font-family: NeueMachina !important;
+      
+}
+
 figure {
     padding: 2.4rem 9.8rem;
 }
@@ -52,7 +57,7 @@ p {
     cursor: pointer;  
     -webkit-backdrop-filter: blur(0.5em);
     backdrop-filter: blur(0.5em);
-    padding: 1.2rem 3.6rem;
+    padding: 1.2rem 2.4rem;
     cursor: pointer;
     transition: all .2s;
 }

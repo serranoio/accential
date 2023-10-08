@@ -14,6 +14,7 @@ const EQ_PARSED_PDF = "eq-parsed-pdf"
 const EQ_TOKENIZED_PDF = "eq-tokenized-pdf"
 const EQ_CONVERTED_DATA = "eq-converted-data"
 const EQ_HTML_REPORT = "eq-html-report"
+const EQ_ACTUAL_REPORT = "eq-actual-report"
 
 type Context struct {
 	Ctx    context.Context

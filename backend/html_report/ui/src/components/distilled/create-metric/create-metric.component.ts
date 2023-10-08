@@ -1,11 +1,12 @@
 import { LitElement, TemplateResult, html } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
-import { AddMetricSteps, CreateMetricOptions, Metric, MetricSteps, dummyMetric, fromDocument, fromOutsideSource, setManually } from '../../../model/metric';
+import { AddMetricSteps, CreateMetricOptions, Metric, MetricSteps, Submetric, dummyMetric, dummySubmetric, fromDocument, fromOutsideSource, setManually } from '../../../model/metric';
 import createMetricCss from './create-metric.css';
 
 import "../../shared/question.component"
 import { SetSelectedTab } from '../../../model/events';
 import { Distilled } from '../../../model/tabs';
+import { SetEq } from '../../../model/worker';
 
 // 3 Steps
 
@@ -16,7 +17,7 @@ export class CreateMetricComponent extends LitElement {
   static styles = [createMetricCss]
 
   @property()
-  metrics: Metric[] = [structuredClone(dummyMetric)]
+  submetrics: Submetric[] = [structuredClone(dummySubmetric)]
   
   @property()
   metric: Metric = structuredClone(dummyMetric)
@@ -45,34 +46,33 @@ constructor() {
   @property()
   addMetricSteps = AddMetricSteps.AddMetric;
 
-  increaseMetricCounter() {
-    this.metrics = [...this.metrics, structuredClone(dummyMetric)]
 
-    this.dispatchEvent(new CustomEvent("update-metrics", {
+  updateSubmetrics() {
+    this.dispatchEvent(new CustomEvent("update-submetrics", {
       composed: true,
       bubbles: true,
       detail: {
-        metrics: this.metrics
+        metrics: this.submetrics
       }
     }))
+  }
+
+  increaseMetricCounter() {
+    this.submetrics = [...this.submetrics, structuredClone(dummySubmetric)]
+
+    this.updateSubmetrics();
   }
   
   decreaseMetricCounter() {
-    if (this.metrics.length <= 1) {
+    if (this.submetrics.length <= 1) {
       return;
     }
     
-    this.metrics = this.metrics.slice(0, this.metrics.length-1)
-    this.dispatchEvent(new CustomEvent("update-metrics", {
-      composed: true,
-      bubbles: true,
-      detail: {
-        metrics: this.metrics
-      }
-    }))
+    this.submetrics = this.submetrics.slice(0, this.submetrics.length-1)
+    this.updateSubmetrics();
   }
 
-  getMetric(position: number, metrics: Metric[]): string {
+  getMetric(position: number, metrics: Submetric[]): string {
     if (position === metrics.length - 1) {
         return String(metrics[position].value)
     }
@@ -81,7 +81,7 @@ constructor() {
       return metrics[position].value + "+" + this.getMetric(position+1, metrics);  
     } else if (metrics[position].operation === "-") {
       return metrics[position].value + "-" + this.getMetric(position+1, metrics);  
-    } else if (metrics[position].operation === "x") {
+    } else if (metrics[position].operation === "*") {
       return metrics[position].value + "*" + this.getMetric(position+1, metrics);  
     } else if (metrics[position].operation === "/") {
       return metrics[position].value + "/" + this.getMetric(position+1, metrics);  
@@ -93,16 +93,18 @@ constructor() {
   }
 
   calculateMetricFromMetrics() {
-    this.valueIntermediate = this.getMetric(0, this.metrics);
+    this.valueIntermediate = this.getMetric(0, this.submetrics);
   }
 
+
   doTheMath(e: any) {
-    this.metric.value = eval(e.target.querySelector("#Value").value)
+    const eq = e.target.querySelector("#Value").value
+    this.metric.value = eval(eq)
     this.metric.label = e.target.querySelector("#Label").value
     this.metric.explanation = e.target.querySelector("#Explanation").value
-    
     this.metric.rating = e.target.querySelector("#Rating").value
-
+    this.metric.submetric = this.submetrics
+    this.metric.operation = SetEq(eq)
 
     this.dispatchEvent(new CustomEvent("add-new-metric", {
       composed: true,
@@ -116,7 +118,7 @@ constructor() {
     // in this step, also include name of metric, explanation and rating
   }
 
-  evaluateMetric() {
+  getInputs() {
     let count = 0;
       
     const allInputs = this.metricForm.querySelectorAll("input");
@@ -126,19 +128,26 @@ constructor() {
       
       if (count % 4 === 0) {  // 0 mod 4 == 0
         curMetric++;
-        this.metrics[curMetric].label = input.value
+        this.submetrics[curMetric].order = curMetric
+        this.submetrics[curMetric].label = input.value
       } else if (count % 4 === 1) {  // 1 mod 4 === 1
-        this.metrics[curMetric].value = Number(input.value)
+        this.submetrics[curMetric].value = Number(input.value)
       } else if (count % 4 === 2) {  // 2 mod 4 === 2
-        this.metrics[curMetric].explanation = input.value
+        this.submetrics[curMetric].explanation = input.value
       } else if (count % 4 === 3) {  // 3 mod 4 === 3
-        if (curMetric < this.metrics.length - 1) {  // not the last one
-          this.metrics[curMetric].operation = input.value
+        if (curMetric < this.submetrics.length - 1) {  // not the last one
+          this.submetrics[curMetric].operation = input.value
         }
         
       }
       count++;  
     }
+
+    this.updateSubmetrics()
+  }
+
+  evaluateMetric() {
+    this.getInputs()
     this.metricSteps = MetricSteps.AddParenthesis;
     this.calculateMetricFromMetrics();
   }
@@ -320,16 +329,27 @@ constructor() {
   finishEditing() {
     this.addMetricSteps = AddMetricSteps.AddMetric
     this.sendNewStep(AddMetricSteps.AddMetric)
+    this.getInputs()
   }
+  
+  onOperationChange(e: any) {
+    this.submetrics[e.target.closest("div").dataset.pos-1].operation = e.target.value
+    this.getInputs()
+  }
+  
 
   evaluateMetricsState(): TemplateResult[]  {
-   return this.metrics.map((curMetric: Metric, pos: number) => {
-
+   return this.submetrics.map((curMetric: Submetric, pos: number) => {
 
       return html`
       ${pos === 0 ? "" : html`
-      <div class="operation-div">
-      <input type="text" placeholder="Operation"/>
+      <div class="operation-div" data-pos="${pos}">
+      <input type="text" 
+      placeholder="Operation"
+      value=${this.submetrics[pos-1].operation}
+      @input=${this.onOperationChange}
+      />
+
       </div>
       `}
       <div class="metric-div" data-pos="${pos}">
@@ -342,8 +362,8 @@ constructor() {
             ></question-component>
             </label>
             <input
-            type="text"
-            value=${curMetric.label}
+            type="text"     
+            value=${curMetric.label}    
               placeholder="Label"/>
             </div>
             
