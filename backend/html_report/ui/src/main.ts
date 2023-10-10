@@ -97,11 +97,11 @@ export class Main extends LitElement {
     this.frame = doc as HTMLDivElement;
 
     this.frame.onmouseover = (e) => {
-      const element = e.target as HTMLElement;
-        
-      if (element.nodeName !== "P" &&
-        element.nodeName !== "a" &&
-        element.nodeName !== "FONT") {
+      let element = e.target as HTMLElement;
+
+
+      element = element.closest("td")!;
+      if (!element || element.nodeName !== "TD") {
           return
       }
 

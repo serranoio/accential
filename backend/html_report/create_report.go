@@ -15,12 +15,13 @@ import (
 )
 
 type HydrateDocument struct {
-	HydratedJS  string
-	HydratedCSS string
-	Fun         string
-	Document    string
-	Metrics     []*comm.Metric
-	ID          string
+	HydratedJS   string
+	HydratedCSS  string
+	HydratedFont string
+	Fun          string
+	Document     string
+	Metrics      []*comm.Metric
+	ID           string
 }
 
 func createHydrateDocument() *HydrateDocument {
@@ -77,8 +78,14 @@ func (d *HydrateDocument) hydrateAssets() {
 		log.Panic(err)
 	}
 
+	fontBytes, err := os.ReadFile(getFile(".otf", names))
+	if err != nil {
+		log.Panic(err)
+	}
+
 	d.HydratedCSS = string(cssBytes)
 	d.HydratedJS = string(jsBytes)
+	d.HydratedFont = string(fontBytes)
 }
 
 func createReport(metrics []*comm.Metric, htmlReport []byte) uint {

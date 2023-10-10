@@ -176,11 +176,15 @@ func (t Tag) MarshalJSON() ([]byte, error) {
 
 func CleanString(cleanB []byte) string {
 	clean := string(cleanB)
+	clean = strings.ToLower(clean)
+	// perform lemmatization here
+	if clean == "total revenues" {
+		clean = "total revenue"
+	}
 	clean = strings.ReplaceAll(clean, " ", "")
 	clean = strings.ReplaceAll(clean, "\n", "")
 	clean = strings.ReplaceAll(clean, "\r", "")
 	clean = strings.ReplaceAll(clean, "\t", "")
-	clean = strings.ToLower(clean)
 
 	var result []rune
 	for _, r := range clean {

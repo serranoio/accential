@@ -81,17 +81,158 @@ func onRestart() {
 
 	metrics, name = EvaluationMetrics()
 	addMetricsToDatabase(metrics, name)
+
+	metrics, name = BaseMetrics()
+	addMetricsToDatabase(metrics, name)
+
 }
 
 func addMetricsToDatabase(metrics []*comm.Metric, name string) {
-	// tag := comm.Tag{Name: name}
-	// for _, metric := range metrics {
-	// 	metric.Tags = append(metric.Tags, tag)
-	// }
-
 	Db.Save(metrics)
-	// Db.Save(tag)
-	// Db.Model(&metrics).Association("Tags").Append(tag)
+}
+
+func BaseMetrics() ([]*comm.Metric, string) {
+
+	allMetrics := []*comm.Metric{}
+
+	name := "Base"
+
+	allMetrics = append(allMetrics, &comm.Metric{
+		Label:       "Long-term Debt",
+		Value:       0,
+		Explanation: "This is the long term debt of a company",
+		Operation:   "a",
+		Rating:      "",
+		Submetric: []*comm.Submetric{
+
+			&comm.Submetric{
+				Order:       1,
+				Label:       "long-term debt",
+				Value:       0,
+				Explanation: "long term debt of the company",
+				Operation:   "",
+			},
+		},
+		Tags: []*comm.Tag{
+			&comm.Tag{
+				Name: name,
+			},
+		},
+	})
+
+	allMetrics = append(allMetrics, &comm.Metric{
+		Label:       "Total Revenue",
+		Value:       0,
+		Explanation: "This is the total amount of money that the company made. (before taxes n all that)",
+		Operation:   "a",
+		Rating:      "",
+		Submetric: []*comm.Submetric{
+
+			&comm.Submetric{
+				Order:       1,
+				Label:       "Total Revenue",
+				Value:       0,
+				Explanation: "total revenue",
+				Operation:   "",
+			},
+		},
+		Tags: []*comm.Tag{
+			&comm.Tag{
+				Name: name,
+			},
+		},
+	})
+
+	allMetrics = append(allMetrics, &comm.Metric{
+		Label:       "Total Expenses",
+		Value:       0,
+		Explanation: "This is the total amount of expenses (before taxes n all that)",
+		Operation:   "a",
+		Rating:      "",
+		Submetric: []*comm.Submetric{
+
+			&comm.Submetric{
+				Order:       1,
+				Label:       "Total Expenses",
+				Value:       0,
+				Explanation: "total revenue",
+				Operation:   "",
+			},
+		},
+		Tags: []*comm.Tag{
+			&comm.Tag{
+				Name: name,
+			},
+		},
+	})
+
+	allMetrics = append(allMetrics, &comm.Metric{
+		Label:       "Operating income",
+		Value:       0,
+		Explanation: "Sum total of company's profit after subtracting its regular recurring costs and expenses",
+		Operation:   "a",
+		Rating:      "",
+		Submetric: []*comm.Submetric{
+			&comm.Submetric{
+				Order:       1,
+				Label:       "Operating income",
+				Value:       0,
+				Explanation: "Total income is...",
+				Operation:   "",
+			},
+		},
+		Tags: []*comm.Tag{
+			&comm.Tag{
+				Name: name,
+			},
+		},
+	})
+
+	allMetrics = append(allMetrics, &comm.Metric{
+		Label:       "Net Income",
+		Value:       0,
+		Explanation: "Total amount of income",
+		Operation:   "a",
+		Rating:      "",
+		Submetric: []*comm.Submetric{
+			&comm.Submetric{
+				Order:       1,
+				Label:       "Net Income",
+				Value:       0,
+				Explanation: "Total income is...",
+				Operation:   "",
+			},
+		},
+		Tags: []*comm.Tag{
+			&comm.Tag{
+				Name: name,
+			},
+		},
+	})
+
+	allMetrics = append(allMetrics, &comm.Metric{
+		Label:       "Total Shareholder's Equity",
+		Value:       0,
+		Explanation: "Total amount of equity by shareholders",
+		Operation:   "a",
+		Rating:      "",
+		Submetric: []*comm.Submetric{
+			&comm.Submetric{
+				Order:       1,
+				Label:       "Total Shareholder's Equity",
+				Value:       0,
+				Explanation: "Total income is...",
+				Operation:   "",
+			},
+		},
+		Tags: []*comm.Tag{
+			&comm.Tag{
+				Name: name,
+			},
+		},
+	})
+
+	return allMetrics, "Base"
 }
 
 func EvaluationMetrics() ([]*comm.Metric, string) {
@@ -230,32 +371,9 @@ func StatusMetrics() ([]*comm.Metric, string) {
 		},
 	}
 
-	Mowc4 := comm.Metric{
-		Label:       "Operating income",
-		Value:       0,
-		Explanation: "This is the Total Assets / Total Liabilities",
-		Operation:   "a",
-		Rating:      "",
-		Submetric: []*comm.Submetric{
-			&comm.Submetric{
-				Order:       1,
-				Label:       "Operating income",
-				Value:       0,
-				Explanation: "Total income is...",
-				Operation:   "",
-			},
-		},
-		Tags: []*comm.Tag{
-			&comm.Tag{
-				Name: name,
-			},
-		},
-	}
-
 	allMetrics = append(allMetrics, &Mowc)
 	allMetrics = append(allMetrics, &Mowc2)
 	allMetrics = append(allMetrics, &Mowc3)
-	allMetrics = append(allMetrics, &Mowc4)
 
 	return allMetrics, "Status"
 }
