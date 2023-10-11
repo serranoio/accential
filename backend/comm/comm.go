@@ -2,6 +2,7 @@ package comm
 
 import (
 	"encoding/json"
+	"sort"
 	"strings"
 	"time"
 
@@ -53,6 +54,12 @@ func (d Document) MarshalJSON() ([]byte, error) {
 	return json.Marshal(basicLink)
 }
 
+func OrderSubmetrics(metrics []*Metric) {
+	for _, metric := range metrics {
+		sort.Sort(ASubmetric(metric.Submetric))
+	}
+}
+
 type Submetric struct {
 	ID          uint `gorm:"primaryKey"`
 	CreatedAt   time.Time
@@ -70,18 +77,12 @@ func (sm Submetric) MarshalJSON() ([]byte, error) {
 
 	basicLink := &struct {
 		ID          uint    `json:"id"`
-		CreatedAt   string  `json:"createdat"`
-		UpdatedAt   string  `json:"updatedat"`
-		DeletedAt   string  `json:"deletedat"`
 		Label       string  `json:"label"`
 		Value       float64 `json:"value"`
 		Explanation string  `json:"explanation"`
 		Operation   string  `json:"operation"`
 	}{
 		ID:          sm.ID,
-		CreatedAt:   sm.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:   sm.UpdatedAt.Format("2006-01-02 15:04:05"),
-		DeletedAt:   sm.DeletedAt.Time.String(),
 		Label:       sm.Label,
 		Value:       sm.Value,
 		Explanation: sm.Explanation,
@@ -124,9 +125,7 @@ func (m Metric) MarshalJSON() ([]byte, error) {
 
 	basicLink := &struct {
 		ID          uint         `json:"id"`
-		CreatedAt   string       `json:"createdat"`
-		UpdatedAt   string       `json:"updatedat"`
-		DeletedAt   string       `json:"deletedat"`
+		DocumentID  uint         `json:"documentId"`
 		Label       string       `json:"label"`
 		Value       float64      `json:"value"`
 		Explanation string       `json:"explanation"`
@@ -135,9 +134,7 @@ func (m Metric) MarshalJSON() ([]byte, error) {
 		Submetric   []*Submetric `json:"submetric"`
 	}{
 		ID:          m.ID,
-		CreatedAt:   m.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:   m.UpdatedAt.Format("2006-01-02 15:04:05"),
-		DeletedAt:   m.DeletedAt.Time.String(),
+		DocumentID:  m.DocumentID,
 		Label:       m.Label,
 		Value:       m.Value,
 		Explanation: m.Explanation,

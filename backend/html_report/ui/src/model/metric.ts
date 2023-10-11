@@ -1,14 +1,17 @@
 export interface Metric {
+    id: number,
+    documentId: number,
     label: String,
     value: number,
     explanation: String,
     operation: String | null,
     submetric: Submetric[],
-    rating: number,
+    rating: string,
 }
 
 
 export interface Submetric {
+    id: number
     label: String,
     value: number,
     explanation: String,
@@ -18,16 +21,19 @@ export interface Submetric {
 
 
 export let dummyMetric: Metric = {
+    id: 0,
+    documentId: 0,
     label: "",
     value: -1,
     explanation: "",
     operation: null,
     submetric: [],
-    rating: -1,
+    rating: "",
 }
 
 export let dummySubmetric: Submetric = {
-    label: "asd",
+    id: 0,
+    label: "",
     value: 0,
     explanation: "",
     operation: "",
@@ -53,11 +59,14 @@ export enum AddMetricSteps {
 export const fromDocument = "From Document"
 export const setManually = "Set Manually"
 export const fromOutsideSource = "From Outside Source"
+export const fromOthers = "From Others"
+
 
 export enum CreateMetricOptions {
     FromDocument = fromDocument,
     SetManually = setManually,
-    FromOutsideSource = fromOutsideSource
+    FromOutsideSource = fromOutsideSource,
+    FromOthers = fromOthers
 }
 
 export const label = "setting-label"

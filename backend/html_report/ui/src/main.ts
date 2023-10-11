@@ -8,8 +8,8 @@ import "./components/doc/doc.component"
 import "./components/distilled/distilled.component"
 import { CreateMetric, Distilled, Doc } from './model/tabs';
 import { SetSelectedTab } from './model/events';
-import { AddMetricSteps, CreateMetricOptions, LabelValueSteps, Metric, dummyMetric } from './model/metric';
-import { GetAllMetrics } from './model/api';
+import { AddMetricSteps, CreateMetricOptions, LabelValueSteps, Metric, Submetric, dummyMetric, dummySubmetric } from './model/metric';
+import { AddNewMetric, GetAllMetrics } from './model/api';
 import { getDocId } from './model/util';
 
 @customElement('main-component')
@@ -20,7 +20,9 @@ export class Main extends LitElement {
   statistics: Statistics;
 
   @property()
-  creatingMetrics: Metric[] = [structuredClone(dummyMetric)]
+  creatingMetrics: Submetric[] = [structuredClone(dummySubmetric)]
+  @property()
+  creatingMetricsMain: Metric = structuredClone(dummyMetric)
 
   @property()
   selectedTab = CreateMetric;
@@ -56,6 +58,9 @@ export class Main extends LitElement {
 
   @property()
   creatingMetricInputs: number = -1;
+
+  @property()
+  position: number = -1;
 
   giveStyles(element: HTMLElement) {
     element.style.boxShadow = "0 0 0 2px var(--info)";
@@ -185,6 +190,10 @@ export class Main extends LitElement {
       this.creatingMetricFromDocument = structuredClone(dummyMetric)
       this.labelValueSteps = LabelValueSteps.Label
       this.removeSelectedElements()
+    } else if (this.chosenMethod === CreateMetricOptions.FromOthers) {
+      if (this.metrics.length > 0) {
+        this.selectedTab = Distilled
+      }
     }
   }
 
@@ -201,10 +210,53 @@ export class Main extends LitElement {
   }
 
   addNewMetric(e: any) {
-    this.newMetric = e.detail.metric;
+    let newMetric = e.detail.metric
 
+    AddNewMetric(newMetric, getDocId())
+
+    this.creatingMetricsMain = structuredClone(dummyMetric) 
+    this.creatingMetrics = [structuredClone(dummySubmetric)]
+    
+    console.log("position", this.position, this.metrics)
+    
+    if (this.position !== -1) {
+console.log("CHANGING")
+
+      this.metrics[this.position] = newMetric;
+      
+      this.position = -1;
+    } else {
+
+      console.log("PUSHED")
+
+      this.metrics.push(newMetric)
+    }
+    
+    
+    console.log(this.metrics)
+    
     this.requestUpdate()
+    // on edit, we replace old metric
+
+    // on new one, we add metric
+  
   }
+
+  getUseMetric(e: any) {
+    let metric = e.detail.metric;
+    metric.operation = ""  // becaue it would show up as (a/a)
+    this.creatingMetrics[this.creatingMetricInputs] = metric
+    this.selectedTab = CreateMetric
+  }
+
+  getEditMetric(e: any) {
+    this.creatingMetrics = e.detail.metric.submetric;
+    this.creatingMetricsMain = e.detail.metric;
+    this.selectedTab = CreateMetric;
+    this.position = e.detail.position;
+  }
+
+  
 
 
   constructor() {
@@ -217,6 +269,8 @@ export class Main extends LitElement {
     document.addEventListener("creating-metric-inputs", this.setCreatingMetricInputs.bind(this))
     document.addEventListener("add-new-metric", this.addNewMetric.bind(this))
     document.addEventListener("update-submetrics", this.updateSubmetrics.bind(this))
+    document.addEventListener("UseMetric", this.getUseMetric.bind(this))
+    document.addEventListener("EditMetric", this.getEditMetric.bind(this))
 
   }
 
@@ -236,6 +290,7 @@ export class Main extends LitElement {
       <distilled-component
       .statistics=${this.statistics}
       .newMetric=${this.newMetric}
+      .chosenMethod=${this.chosenMethod}
       slot="distilled"
       .metrics=${this.metrics}
       ></distilled-component>`
@@ -246,6 +301,8 @@ export class Main extends LitElement {
       .addMetricSteps=${this.addMetricSteps}
       .chosenMethod=${this.chosenMethod}
       .creatingMetricInputs=${this.creatingMetricInputs}
+      // main maps to metric, metric maps to submetric
+      .metric=${this.creatingMetricsMain}
       .submetrics=${this.creatingMetrics}
       >
       </create-metric-component>
@@ -260,8 +317,10 @@ export class Main extends LitElement {
       return "Document"
     } else if (this.chosenMethod === CreateMetricOptions.SetManually) {
       return "Manual"
+    } else if (this.chosenMethod === CreateMetricOptions.FromOthers) {
+      return "From Others"
     } else {
-      return "Outside Source"
+      return "From outside source"
     }
   }
 

@@ -30,7 +30,7 @@
   --primary-1-shade-2: #ccaba1;
   --primary-2: #f3845e;
   --primary-3: #ce3500;
-  --primary-4: #a72b00;
+  --primary-4: #a72;
 
   --border: #2f2a20;
   --background: #1f1a10;
@@ -55,7 +55,13 @@
   --black: #000000;
 
   --success: #53a051;
+  --successD10: #479144;
   --info: #006d9c;
+
+
+  --spacingQuarter: .5rem;
+--spacingHalf: 1rem;
+--spacing: 2rem;
 
   --infoColorD10: #00577c;
 }
@@ -64,7 +70,7 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: NeueMachina;
+  font-family: Inter, sans-serif;
 }
 
 html {
@@ -77,14 +83,13 @@ body {
 
 h1,
 h2,
-h3,
-p {
+h3 {
   color: var(--gary80);
-  /* font-family: Arial !important; */
+  font-family: NeueMachina;
 }
 
 input {
-  font-family: NeueMachina !important;
+  font-family: Inter, sans-serif !important;
 }
 
 

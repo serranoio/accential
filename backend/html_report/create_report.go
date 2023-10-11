@@ -6,12 +6,13 @@ import (
 	"bytes"
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/charmbracelet/log"
 )
 
 type HydrateDocument struct {
@@ -62,7 +63,7 @@ func getFile(lookForName string, fileNames []string) string {
 		}
 	}
 
-	log.Panicln("did not find name")
+	log.Fatal("did not find name")
 	return "failed"
 }
 
@@ -71,16 +72,16 @@ func (d *HydrateDocument) hydrateAssets() {
 
 	jsBytes, err := os.ReadFile(getFile(".js", names))
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 	cssBytes, err := os.ReadFile(getFile(".css", names))
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 
 	fontBytes, err := os.ReadFile(getFile(".otf", names))
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 
 	d.HydratedCSS = string(cssBytes)
@@ -102,7 +103,7 @@ func createReport(metrics []*comm.Metric, htmlReport []byte) uint {
 	var byteBuf bytes.Buffer
 	dir, err := os.Getwd()
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	fullPath := path.Join(dir, "html_report", "templates", "index.gohtml")
 	tmpl := template.Must(template.ParseFiles(fullPath))
@@ -110,7 +111,7 @@ func createReport(metrics []*comm.Metric, htmlReport []byte) uint {
 
 	reportBytes := byteBuf.Bytes()
 	os.WriteFile("report.html", reportBytes, 0664)
-	log.Println("File Written")
+	log.Info("File Written")
 
 	return database.SaveDocument(reportBytes, metrics, documentToSave.ID)
 }

@@ -2,10 +2,10 @@ package database
 
 import (
 	"backend/comm"
-	"log"
 	"os"
 	"path"
 
+	"github.com/charmbracelet/log"
 	"github.com/google/uuid"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -13,11 +13,32 @@ import (
 
 var Db *gorm.DB
 
+func SetDocumentID(metrics []*comm.Metric) {
+	for _, metric := range metrics {
+		idGenerator := uuid.New()
+		metric.ID = uint(idGenerator.ID())
+	}
+}
+
 func CloneMetrics(metrics []*comm.Metric) {
 	// Set the DocumentID for each Metric
 	for _, metric := range metrics {
 		idGenerator := uuid.New()
 		metric.ID = uint(idGenerator.ID())
+		for _, submetric := range metric.Submetric {
+			idGenerator := uuid.New()
+			submetric.ID = uint(idGenerator.ID())
+		}
+		for _, tag := range metric.Tags {
+			idGenerator := uuid.New()
+			tag.ID = uint(idGenerator.ID())
+		}
+	}
+}
+
+func AddMetrics(metrics []*comm.Metric) {
+	// Set the DocumentID for each Metric
+	for _, metric := range metrics {
 		for _, submetric := range metric.Submetric {
 			idGenerator := uuid.New()
 			submetric.ID = uint(idGenerator.ID())
@@ -48,7 +69,7 @@ func InitDatabase() {
 	dir, err := os.Getwd()
 
 	if err != nil {
-		log.Panicln(err)
+		log.Fatal(err)
 	}
 	databaseExists := true
 
@@ -61,7 +82,7 @@ func InitDatabase() {
 	Db, err = gorm.Open(sqlite.Open(path), &gorm.Config{})
 
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 
 	Db.AutoMigrate(&comm.Document{})

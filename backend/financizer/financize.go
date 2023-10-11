@@ -4,7 +4,6 @@ import (
 	"backend/comm"
 	"backend/parser"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -43,12 +42,6 @@ func isOperation(s string) bool {
 	return false
 }
 
-func orderSubmetrics(metrics []*comm.Metric) {
-	for _, metric := range metrics {
-		sort.Sort(comm.ASubmetric(metric.Submetric))
-	}
-}
-
 func removeSpaces(label string) string {
 	return strings.ReplaceAll(label, " ", "")
 }
@@ -80,7 +73,7 @@ func createMetrics(allMetrics []*comm.Metric, tables []*parser.Table) []*comm.Me
 		}
 	}
 
-	orderSubmetrics(allMetrics)
+	comm.OrderSubmetrics(allMetrics)
 
 	// execute metrics
 	for _, metric := range allMetrics {

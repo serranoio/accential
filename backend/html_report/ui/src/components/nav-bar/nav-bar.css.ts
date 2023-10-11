@@ -18,7 +18,7 @@ nav {
     background-color: var(--gray20);
     justify-content: space-between;
     align-items: center;
-    padding: 0 2.4rem;
+    padding: 0 var(--spacing);
     font-size: 2.4rem;
     height: 70px; 
 }
@@ -37,7 +37,7 @@ h3, .tab {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     background-color: var(--gray22);
-    padding: 1.2rem 2.4rem;
+    padding: var(--spacingHalf) var(--spacing);
     align-self: end;
     color: var(--gray60);
 }
@@ -64,7 +64,7 @@ h3 {
 input {
     background-color: transparent;
     border: none;
-    padding: .6rem;
+    padding: var(--spacingQuarter);
     color: var(--gray80);
     font-size: 2.4rem;
     width: 12rem;

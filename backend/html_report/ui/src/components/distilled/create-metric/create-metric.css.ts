@@ -23,7 +23,7 @@ button, input {
 }
 
 figure {
-    padding: 2.4rem 9.8rem;
+    padding: var(--spacingHalf) 9.8rem;
 }
 
 .configure-metric-div {
@@ -44,7 +44,7 @@ h2 {
 p {
     color: var(--gray60);
     font-size: 2rem;
-    margin-bottom: 2.4rem;
+    margin-bottom: var(--spacing)
 }
 
 .create-metric,
@@ -57,7 +57,7 @@ p {
     cursor: pointer;  
     -webkit-backdrop-filter: blur(0.5em);
     backdrop-filter: blur(0.5em);
-    padding: 1.2rem 2.4rem;
+    padding: var(--spacingHalf) var(--spacing);
     cursor: pointer;
     transition: all .2s;
 }
@@ -98,7 +98,7 @@ label {
 }
 
 input {
-    padding: 1.2rem;
+    padding: var(--spacingHalf);
     border-radius: 10px;
     font-size: 2rem;
     background-color: transparent;
@@ -121,7 +121,7 @@ input::placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: .6rem 0;
+    padding: var(--spacingQuarter) 0;
 }
 
 .metric-div {
@@ -130,7 +130,7 @@ input::placeholder {
     justify-content: center;
     gap: 2.4rem;
     background-color: var(--gray25);
-    padding: 2.4rem;
+    padding: var(--spacing);
     border-radius: 10px;
     position: relative;
 }
@@ -177,7 +177,7 @@ input::placeholder {
 .add-metric span {
     transition: all .5s;
     opacity: 0;
-    padding-left: .6rem;
+    padding-left: var(--spacingQuarter);
 }
 
 .metric-div:hover span {
@@ -187,7 +187,7 @@ input::placeholder {
 
 .add-metric button {
     background-color: var(--gray30);
-    padding: 1.2rem 2.4rem;
+    padding: var(--spacingHalf) var(--spacing);
     border-radius: 10px;
     color: var(--gray80);
     font-size: 2rem;
@@ -209,7 +209,7 @@ box-shadow: 0 0 0 0 var(--infoColorD10);
     position: absolute;
     right: 5%;
     background: transparent;
-    padding: 1.2rem;
+    padding: var(--spacingHalf);
     border: 0;
     box-shadow: 0 0 0 1px var(--info);
     cursor: pointer;

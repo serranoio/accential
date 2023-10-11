@@ -10,14 +10,15 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	// "encoding/base64"
 	"io"
-	"log"
 	"path"
 	"time"
 
+	"github.com/charmbracelet/log"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -99,7 +100,8 @@ func createApi() {
 		c.JSON(http.StatusOK, gin.H{
 			"id": document.ID,
 		})
-		log.Println("Document id sent")
+
+		log.Info("Document id sent")
 	})
 
 	r.POST(path.Join(API, "post", "document"), func(c *gin.Context) {
@@ -118,7 +120,7 @@ func createApi() {
 		c.JSON(http.StatusOK, gin.H{
 			"id": processReport(fileAndMetric),
 		})
-		log.Println("Document id sent")
+		log.Info("Document id sent")
 	})
 
 	type NewDoc struct {
@@ -249,18 +251,39 @@ func createApi() {
 		// get metric & update it with ID
 		metric := &comm.Metric{}
 		err = json.Unmarshal(bytes, &metric)
-		metrics := []*comm.Metric{metric}
-		database.CloneMetrics(metrics)
+
+		var metrics []*comm.Metric
+		metrics = append(metrics, metric)
+
+		u64, err := strconv.ParseUint(c.Param("docid"), 10, 64)
+		if metric.DocumentID == 0 {
+			metric.DocumentID = uint(u64)
+		}
+
 		// get old metrics
 		document := comm.Document{}
 		database.Db.Model(&comm.Document{}).
 			Preload("Metrics").
 			Preload("Metrics.Submetric").
 			First(&document, c.Param("docid"))
-		// combine them
-		document.Metrics = append(document.Metrics, metrics...)
+
+		// update old one if theyre same ID
+		for i, documentMetrics := range document.Metrics {
+			if documentMetrics.ID == metric.ID {
+				document.Metrics[i] = metric
+				document.Metrics[i].Submetric = metric.Submetric
+			}
+		}
+
+		if metric.DocumentID == 0 {
+			// combine them
+			document.Metrics = append(document.Metrics, metrics...)
+		}
+
 		// save it all
 		database.Db.Save(document)
+		database.Db.Save(metric)
+		database.Db.Save(metric.Submetric)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
@@ -282,12 +305,41 @@ func createApi() {
 			Preload("Metrics.Submetric").
 			First(&document, c.Param("docid"))
 
+		comm.OrderSubmetrics(document.Metrics)
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": document.Metrics,
 		})
 
 	})
 
+	r.GET(path.Join("assets", "NeueMachina-Regular-e896c98c.otf"), func(c *gin.Context) {
+
+		workingDirectory, err := os.Getwd()
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "bad",
+			})
+			return
+		}
+
+		path := path.Join(workingDirectory, "html_report", "ui", "dist", "fonts", "NeueMachina-Regular.otf")
+		bytes, err := os.ReadFile(path)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "bad",
+			})
+			return
+		}
+
+		log.Info("Sent Font")
+
+		c.Data(http.StatusOK, "application/font-sfnt; charset=utf-8", bytes)
+
+	})
+
 	r.Run() // listen and serve on 0.0.0.0:8080
-	log.Println("listen and serve on 0.0.0.0:8080")
+	log.Info("listen and serve on 0.0.0.0:8080")
 }

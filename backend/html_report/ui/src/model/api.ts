@@ -23,16 +23,16 @@ export const GetAllMetrics = async (id: string) => {
     } catch (err) {
         console.log(err)
     }
-
 }
 
 export const AddNewMetric = async (newMetric: Metric, docId: string) => {
+
     try {
         const metrics = await fetch(`${url}/${Api}/${Metrics}/${Add}/${docId}`, {
             method: "POST",
             body: JSON.stringify(
-              newMetric
-            ),
+                newMetric
+                ),
         }
         )
 

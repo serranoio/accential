@@ -1,6 +1,6 @@
 import { LitElement, TemplateResult, html } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
-import { AddMetricSteps, CreateMetricOptions, Metric, MetricSteps, Submetric, dummyMetric, dummySubmetric, fromDocument, fromOutsideSource, setManually } from '../../../model/metric';
+import { AddMetricSteps, CreateMetricOptions, Metric, MetricSteps, Submetric, dummyMetric, dummySubmetric, fromDocument, fromOthers, fromOutsideSource, setManually } from '../../../model/metric';
 import createMetricCss from './create-metric.css';
 
 import "../../shared/question.component"
@@ -37,6 +37,7 @@ export class CreateMetricComponent extends LitElement {
 
   @property()
   creatingMetricInputs: number = -1;
+
 
 constructor() {
   super()
@@ -110,7 +111,7 @@ constructor() {
       composed: true,
       bubbles: true,
       detail: {
-        metric: this.metric
+        metric: this.metric,
       }
     }))
 
@@ -198,49 +199,6 @@ constructor() {
     }
   }
 
-  addParenthesisState(): TemplateResult {
-
-    return html`
-    <h2>Name Your Metric</h2>
-    <p>Name your new metric, as well as add any necessary parenthesis for the calculation.</p>
-    <div class="metric-div">
-    <div class="labelinput">
-    <label>Label
-    <question-component
-    .description=${this.getDescription("Label")}>
-    .width=${20}
-    </question-component>
-    </label>
-    <input type="text" id="Label" placeholder="Name of Metric">
-    </div>
-    <div class="labelinput">
-    <label>Value
-    <question-component
-    .description=${this.getDescription("Value")}
-    .width=${20}></question-component>
-    </label>
-    <input type="text" id="Value" value=${this.valueIntermediate}/>
-    </div>
-    <div class="labelinput">
-    <label>Explanation
-    <question-component
-    .description=${this.getDescription("Explanation")}
-    .width=${20}></question-component>
-    </label>
-    <input type="text" id="Explanation" placeholder="Explanation of Metric">
-    </div>
-    <div class="labelinput">
-    <label>Rating
-    <question-component
-    .description=${this.getDescription("Rating")}
-    .width=${30}></question-component>
-  </label>
-  <input type="number" id="Rating" placeholder="Rating">
-</div>
-</div>
-`;
-  }
-
   handleButtonClick(e: any): boolean {
     if (e.target.classList.contains("add-metric")) {
       return false;
@@ -304,6 +262,7 @@ constructor() {
         <button type="button">${fromDocument}</button>
         <button type="button">${setManually}</button>
         <button type="button">${fromOutsideSource}</button>
+        <button type="button">${fromOthers}</button>
       `
     } else {
       
@@ -405,6 +364,50 @@ constructor() {
           });
           
         }
+
+  addParenthesisState(): TemplateResult {
+
+    return html`
+    <h2>Name Your Metric</h2>
+    <p>Name your new metric, as well as add any necessary parenthesis for the calculation.</p>
+    <div class="metric-div">
+    <div class="labelinput">
+    <label>Label
+    <question-component
+    .description=${this.getDescription("Label")}
+    .width=${15}
+    >
+    </question-component>
+    </label>
+    <input type="text" id="Label" value=${this.metric.label} placeholder="Name of Metric">
+    </div>
+    <div class="labelinput">
+    <label>Value
+    <question-component
+    .description=${this.getDescription("Value")}
+    .width=${20}></question-component>
+    </label>
+    <input type="text" id="Value" value=${this.valueIntermediate}/>
+    </div>
+    <div class="labelinput">
+    <label>Explanation
+    <question-component
+    .description=${this.getDescription("Explanation")}
+    .width=${20}></question-component>
+    </label>
+    <input type="text" id="Explanation" value=${this.metric.explanation} placeholder="Explanation of Metric">
+    </div>
+    <div class="labelinput">
+    <label>Rating
+    <question-component
+    .description=${this.getDescription("Rating")}
+    .width=${30}></question-component>
+  </label>
+  <input type="number" id="Rating" placeholder="Rating">
+</div>
+</div>
+`;
+  }
         
         render() {
  

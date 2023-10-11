@@ -47,7 +47,7 @@ html {
     border: 1px solid var(--gray25);
     display: flex;
     align-items: center;
-    padding: 1.2rem 1.2rem; 
+    padding: var(--spacingHalf) var(--spacingHalf); 
     font-size: 2rem;
     flex: 1;
 
@@ -63,8 +63,10 @@ html {
     width: 100%;
   }
   
+
+  .include-metric,
   .more {
-    padding: .6rem 1.2rem;
+    padding: var(--spacingQuarter) var(--spacingHalf);
     border-radius: 10px;
     background: none;
     border: none;
@@ -75,11 +77,25 @@ html {
     transition: all .2s;
   }
   
+  .include-metric,
   .more:hover {
     box-shadow: 0 0 0 2px var(--gray80);
     color: var(--gray80);
-  
+    
   }
+  
+  .include-metric {
+    margin-right: 2.4rem;
+    box-shadow: 0 0 0 2px var(--success);
+    color: var(--success);
+  }
+  
+  .include-metric:hover {
+    box-shadow: 0 0 0 2px var(--successD10);
+    color: var(--successD10);
+
+  }
+
   
   .info {
     overflow: hidden;
@@ -91,7 +107,7 @@ html {
   }
   .show {
     overflow: visible;
-    padding: 1.2rem;
+    padding: var(--spacingHalf);
     visibility: visible;
     min-height: 0px;
     height: auto;

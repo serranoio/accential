@@ -9,7 +9,7 @@ export default css`
     background-color: var(--gray80);
     color: var(--gray20);
     font-weight: 700;
-    padding: 2.4rem;
+    padding: var(--spacing);
     width: 16px;
     height: 16px;
     display: flex;
@@ -25,7 +25,7 @@ span {
     right: 0;
     position: absolute;
     background-color: var(--gray30);
-    padding: .6rem;
+    padding: var(--spacingQuarter);
     color: var(--gray80);
     font-weight: 400;
     border-radius: 10px;

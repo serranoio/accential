@@ -29,7 +29,7 @@ h1 {
   transform: translateX(50%);
   bottom: 5%;
   background-color: var(--gray30);
-  padding: 1.2rem 3.2rem;
+  padding: var(--spacingHalf) var(--spacing);
   font-size: 2rem;
   border-radius: 10px;
   color: var(--80);

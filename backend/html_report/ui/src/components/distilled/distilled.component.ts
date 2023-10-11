@@ -5,9 +5,7 @@ import { Statistics, dummyStatistics } from '../../model/statistics';
 
 import "./metric/metric"
 import "./create-metric/create-metric.component"
-import { Metric, dummyMetric } from '../../model/metric';
-import { AddNewMetric } from '../../model/api';
-import { getDocId } from '../../model/util';
+import { CreateMetricOptions, Metric } from '../../model/metric';
 
 @customElement('distilled-component')
 export class DistilledComponent extends LitElement {
@@ -18,9 +16,10 @@ export class DistilledComponent extends LitElement {
 
   @property()
   metrics: Metric[] = []
-  
+
   @property()
-  newMetric: Metric = dummyMetric;
+  chosenMethod = CreateMetricOptions.SetManually
+  
 
   // fillMetrics() {
   //     const figures = document.querySelector("div")?.querySelectorAll("figure")!
@@ -64,20 +63,11 @@ export class DistilledComponent extends LitElement {
     // setTimeout(this.fillMetrics.bind(this), 0);
   }
 
-  addNewMetric() {
-    if (this.newMetric !== dummyMetric && !this.metrics.includes(this.newMetric)) {
-      AddNewMetric(this.newMetric, getDocId())
-      this.metrics.push(this.newMetric)
-    }
-  }
-
   constructor() {
     super()
   }
 
   render() {
-
-    this.addNewMetric()
 
     return html`
        <section class="full">
@@ -105,13 +95,15 @@ export class DistilledComponent extends LitElement {
         
         </table> 
         
-        ${this.metrics.map((metric: Metric) => {
+        ${this.metrics.map((metric: Metric, position: number) => {
 
+          console.log(metric)
+          
           return html`
           <metric-component
-          Label=${metric.label}
-          Value=${metric.value}
-          Explanation=${metric.explanation}
+          .metric=${metric}
+          .position=${position}
+          .chosenMethod=${this.chosenMethod}
           >
           </metric-component>
           `

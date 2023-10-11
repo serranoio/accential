@@ -1,7 +1,14 @@
+# October 10th, 2023.
+- Served font to hydrated document using gin. (no need for putting it within the document)
+- Create metrics from other metrics
+- Deep Edit metrics
+- changed spacing to Splunk spacing
+
 # October 9th, 2023.
 - MVP is NOT done.
 - Creating bare metrics
 - fixed hover animation
+- on file send, made 'folder screen' full screen default
 
 # October 8th, 2023.
 ## Status 
