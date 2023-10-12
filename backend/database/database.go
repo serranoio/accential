@@ -109,6 +109,12 @@ func onRestart() {
 }
 
 func addMetricsToDatabase(metrics []*comm.Metric, name string) {
+	for _, metric := range metrics {
+		metric.Tags = append(metric.Tags, &comm.Tag{
+			Name: "All",
+		})
+	}
+
 	Db.Save(metrics)
 }
 

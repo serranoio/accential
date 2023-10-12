@@ -23,6 +23,7 @@ type HydrateDocument struct {
 	Document     string
 	Metrics      []*comm.Metric
 	ID           string
+	XbrlViewer   string
 }
 
 func createHydrateDocument() *HydrateDocument {
@@ -84,9 +85,30 @@ func (d *HydrateDocument) hydrateAssets() {
 		log.Fatal(err)
 	}
 
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	path := path.Join(cwd, "html_report", "ui", "dist", "xbrl", "ixbrlviewer.js")
+	XbrlViewerBytes, err := os.ReadFile(path)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	d.HydratedCSS = string(cssBytes)
 	d.HydratedJS = string(jsBytes)
 	d.HydratedFont = string(fontBytes)
+	d.XbrlViewer = string(XbrlViewerBytes)
+}
+
+// insert arelle viewer within string
+// find the end of the html tag at the beginning
+// add script there
+// add rest of the script file
+func hydrateDocumentWithAdelle() {
+
 }
 
 func createReport(metrics []*comm.Metric, htmlReport []byte) uint {

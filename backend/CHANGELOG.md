@@ -1,3 +1,7 @@
+# October 11th, 2023.
+- edit button styles 
+- Adding xbrl viewer (goated)
+
 # October 10th, 2023.
 - Served font to hydrated document using gin. (no need for putting it within the document)
 - Create metrics from other metrics
@@ -53,22 +57,9 @@
     of Step 1.
 - Multiple selection in doucment
 - DEPLOY
-- EDIT METRICS
-- Use other metrics for calculation
 
- ChooseMethod options, 
-    add method "FromOthers".
-    Move over to metrics tab
-    Include (+) button on each top level metric
-    Pressing it will take Label + Value + Explanation from metric
-    and input it into input field.
-
-    Question????
-    
-    The metric will be based on OTHER metrics. It will be LINKED to the other metrics
-
-    If metric contains link, check links to find other metric value and use calculation for that
-    instead of withi the tables
+- must make app secure. Clean input from computation
+- research xlbr document format
 
 ### You can also edit old metrics.
 # Edit button shows up under "more"

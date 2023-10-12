@@ -65,7 +65,7 @@ html {
   
 
   .include-metric,
-  .more {
+  .more, .edit-metric {
     padding: var(--spacingQuarter) var(--spacingHalf);
     border-radius: 10px;
     background: none;
@@ -77,7 +77,8 @@ html {
     transition: all .2s;
   }
   
-  .include-metric,
+  .edit-metric:hover,
+  .include-metric:hover,
   .more:hover {
     box-shadow: 0 0 0 2px var(--gray80);
     color: var(--gray80);
@@ -116,4 +117,6 @@ html {
   .turn {
     transform: rotate(180deg);
   }
+
+  
 `;

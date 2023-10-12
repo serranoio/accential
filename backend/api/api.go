@@ -7,7 +7,9 @@ import (
 	"backend/html_report"
 	"backend/parser"
 	helpers "backend/rabbitmq"
+	"backend/search"
 	"encoding/json"
+
 	"net/http"
 	"os"
 	"strconv"
@@ -28,22 +30,22 @@ type FileAndMetric struct {
 	Metric string
 }
 
-func temp() {
+// func temp() {
 
-	currentWorkingDirectory, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
+// 	currentWorkingDirectory, err := os.Getwd()
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	file, err := os.Open(path.Join(currentWorkingDirectory, "bio.htm"))
+// 	file, err := os.Open(path.Join(currentWorkingDirectory, "bio.htm"))
 
-	bytes, err := io.ReadAll(file)
+// 	bytes, err := io.ReadAll(file)
 
-	processReport(&FileAndMetric{
-		File:   string(bytes),
-		Metric: "Status",
-	})
-}
+// 	processReport(&FileAndMetric{
+// 		File:   string(bytes),
+// 		Metric: "Status",
+// 	})
+// }
 
 func InitAPI() {
 	// temp()
@@ -62,6 +64,7 @@ const API = "api"
 func createApi() {
 
 	r := gin.Default()
+
 	r.Use(cors.New(cors.Config{
 		AllowAllOrigins: true,
 		// Access-Control-Allow-Origin
@@ -340,6 +343,38 @@ func createApi() {
 
 	})
 
-	r.Run() // listen and serve on 0.0.0.0:8080
-	log.Info("listen and serve on 0.0.0.0:8080")
+	r.GET(path.Join("search", "get"), func(c *gin.Context) {
+
+		// var buffer *bytes.Buffer
+
+		dir, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		path := path.Join(dir, "search.html")
+		file, err := os.Create(path)
+		defer file.Close()
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "bad",
+			})
+		}
+
+		search.InitSearch().Component.Render(c, file)
+
+		bytes, err := os.ReadFile(path)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "bad",
+			})
+		}
+
+		c.Data(http.StatusOK, "text/html", bytes)
+
+	})
+
+	r.Run(":8080")
 }
