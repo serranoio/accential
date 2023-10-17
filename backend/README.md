@@ -102,4 +102,18 @@ add order to save submetrics
 
 // when you find td, you consume next text token which is the contents
 
-// don't consume next contents
+// don't consume next content
+
+
+arelleCmdLine --plugins=/Users/davidserrano/Library/Python/3.9/lib/python/site-packages/iXBRLViewerPlugin -f /Users/davidserrano/greatness/rust/accential/backend/10-k-example.html --save-viewer ixbrl-report.html --viewer-url /Users/davidserrano/greatness/rust/accential/backend/html_report/ui/public/xbrl/ixbrlviewer.js
+
+
+# Deploy
+
+* Deployed onto fly using flyctl
+* Backend deployed at https://accential.fly.dev
+* used fly launch to launch new app
+* used fly deploy to update docker image
+
+# Steps
+* Change url in api.ts to accential.dev

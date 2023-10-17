@@ -103,19 +103,12 @@ func (d *HydrateDocument) hydrateAssets() {
 	d.XbrlViewer = string(XbrlViewerBytes)
 }
 
-// insert arelle viewer within string
-// find the end of the html tag at the beginning
-// add script there
-// add rest of the script file
-func hydrateDocumentWithAdelle() {
-
-}
-
 func createReport(metrics []*comm.Metric, htmlReport []byte) uint {
 	document := createHydrateDocument()
 	document.hydrateAssets()
 	document.Metrics = metrics
 	document.Document = string(htmlReport)
+
 	// get id from database document, put it in hydration.
 	documentToSave := &comm.Document{}
 	database.Db.Save(documentToSave)

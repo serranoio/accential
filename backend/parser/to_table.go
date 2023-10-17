@@ -134,10 +134,6 @@ func recurse(tokenizer *html.Tokenizer, tables []*Table, depth *int) []*Table {
 			trString := comm.CleanString(Tr)
 			table.addTr(trString)
 
-			if trString == "totalequity" {
-				fmt.Println("gey")
-			}
-
 			for { // for every td
 				p, err := getToken(tokenizer, []string{"td"}, false, []string{"tr"})
 

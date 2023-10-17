@@ -97,6 +97,8 @@ func InitDatabase() {
 }
 
 func onRestart() {
+	log.Info("Database filled")
+
 	metrics, name := StatusMetrics()
 	addMetricsToDatabase(metrics, name)
 

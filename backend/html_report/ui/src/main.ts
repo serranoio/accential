@@ -25,8 +25,8 @@ export class Main extends LitElement {
   creatingMetricsMain: Metric = structuredClone(dummyMetric)
 
   @property()
-  selectedTab = CreateMetric;
-
+  selectedTab = Doc;  
+  
   @property()
   newMetric: Metric = dummyMetric;
 

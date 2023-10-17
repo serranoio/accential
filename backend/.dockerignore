@@ -1,0 +1,25 @@
+# flyctl launch added from html_report/ui/.gitignore
+# Logs
+html_report/ui/**/logs
+html_report/ui/**/*.log
+html_report/ui/**/npm-debug.log*
+html_report/ui/**/yarn-debug.log*
+html_report/ui/**/yarn-error.log*
+html_report/ui/**/pnpm-debug.log*
+html_report/ui/**/lerna-debug.log*
+
+html_report/ui/**/node_modules
+html_report/ui/**/dist-ssr
+html_report/ui/**/*.local
+
+# Editor directories and files
+html_report/ui/**/.vscode/*
+!html_report/ui/**/.vscode/extensions.json
+html_report/ui/**/.idea
+html_report/ui/**/.DS_Store
+html_report/ui/**/*.suo
+html_report/ui/**/*.ntvs*
+html_report/ui/**/*.njsproj
+html_report/ui/**/*.sln
+html_report/ui/**/*.sw?
+fly.toml

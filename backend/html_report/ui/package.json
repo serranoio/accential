@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "ixbrl-viewer": "^1.4.3",
     "lit": "^2.7.6"
   },
   "devDependencies": {
