@@ -1,14 +1,10 @@
 import { customElement, property } from 'lit/decorators.js'
-import { Statistics, dummyStatistics } from '../../../model/statistics';
 import { LitElement, html } from 'lit'
-import { CreateMetricOptions, Metric, dummyMetric } from '../../../model/metric';
-
-
+import { CreateMetricOptions, Metric, Submetric, dummyMetric } from '../../../model/metric';
+import { EditMetric, UseMetric } from '../../../model/events';
 
 @customElement('metric-component')
 export class MetricComponent extends LitElement {
-@property()
-statistics: Statistics = dummyStatistics;
 
 @property()
 openView = false;
@@ -37,7 +33,7 @@ chosenMethod = CreateMetricOptions.SetManually
 
   addMetric() {
 
-    this.dispatchEvent(new CustomEvent("UseMetric", {
+  this.dispatchEvent(new CustomEvent(UseMetric, {
       composed: true,
       bubbles: true,
       detail: {
@@ -47,7 +43,7 @@ chosenMethod = CreateMetricOptions.SetManually
   }
   
   editMetric() {
-    this.dispatchEvent(new CustomEvent("EditMetric", {
+    this.dispatchEvent(new CustomEvent(EditMetric, {
       composed: true,
       bubbles: true,
       detail: {
@@ -58,7 +54,6 @@ chosenMethod = CreateMetricOptions.SetManually
   }
 
   render() {
-    // <p>${this.Rating ? "Good" : "Bad"}</p>
     return html`
         <tr class="row second">
         <td class="column">
@@ -68,7 +63,7 @@ chosenMethod = CreateMetricOptions.SetManually
         <p>${this.metric.value}</p>
         </td>
         <td class="column">
-        none
+        n/a 
         </td>
         <td class="column">
         ${this.chosenMethod === CreateMetricOptions.FromOthers ?
@@ -81,8 +76,13 @@ chosenMethod = CreateMetricOptions.SetManually
         </tr>
         
         <tr class="row info ${this.openView ? "show" : ""}">
-        <td >
+        <td>
         <p>${this.metric.explanation}</p>
+        <p>Calculated using: </p>
+        <ol>
+        ${this.metric.submetric.map((submetric: Submetric) => {
+          return html`<li><p>${submetric.label} with value of: ${submetric.value} ${submetric.operation}</p></li>`
+        })}</ol>
         <button class="edit-metric" @click=${this.editMetric}>Edit</button>
         </td>
         </tr>

@@ -125,23 +125,9 @@ func createMetrics(allMetrics []*comm.Metric, tables []*parser.Table) []*comm.Me
 }
 
 func processTables(tables []*parser.Table, metrics []*comm.Metric) []*comm.Metric {
-	// var buf bytes.Buffer // execute template on byte buffer
-
 	// metrics := testMetric()
 
 	createMetrics(metrics, tables)
-
-	// statistics := CreateStatistics()
-	// statistics.initAllStatistics()
-
-	// for _, v := range tables {
-	// 	for tr, td := range v.Tr {
-	// 		statistics.checkForMeasureOfWorkingCapital(tr, td)
-
-	// 	}
-	// }
-
-	// statistics.calculateAll()
 
 	return metrics
 }

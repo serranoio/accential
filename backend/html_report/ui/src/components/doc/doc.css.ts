@@ -14,7 +14,7 @@ export default css`
 
   .labels {
     position: absolute;
-    right: 0%;
+    right: .5%;
     transform: translateX(50%);
     top: 5%;
     background-color: var(--gray30);
@@ -23,6 +23,7 @@ export default css`
     border-radius: 10px;
     color: var(--80);
     border: none;
+    width: 30rem;
   }
 
   .labels p {

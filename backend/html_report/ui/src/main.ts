@@ -2,12 +2,11 @@ import { CSSResultGroup, LitElement, TemplateResult, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 
 import mainStyles from "./main.css"
-import { Statistics, dummyStatistics } from './model/statistics';
 import './components/nav-bar/nav-bar.component';
 import "./components/doc/doc.component"
 import "./components/distilled/distilled.component"
 import { CreateMetric, Distilled, Doc } from './model/tabs';
-import { SetSelectedTab } from './model/events';
+import { AddNewMetricEvent, ChangeMetricSteps, EditMetric, SetCurrentInput, SetSelectedTab, UpdateSubmetrics, UseMetric } from './model/events';
 import { AddMetricSteps, CreateMetricOptions, LabelValueSteps, Metric, Submetric, dummyMetric, dummySubmetric } from './model/metric';
 import { AddNewMetric, GetAllMetrics } from './model/api';
 import { getDocId } from './model/util';
@@ -15,9 +14,6 @@ import { getDocId } from './model/util';
 @customElement('main-component')
 export class Main extends LitElement {
   static styles?: CSSResultGroup | undefined = [mainStyles] 
-
-  @property()
-  statistics: Statistics;
 
   @property()
   creatingMetrics: Submetric[] = [structuredClone(dummySubmetric)]
@@ -49,13 +45,13 @@ export class Main extends LitElement {
 
   @property()
   currentElementList: any = [];
-
+  // any time we are creating a new metric from document, we populate this guy
   @property()
   creatingMetricFromDocument = structuredClone(dummyMetric)
 
   @property()
   labelValueSteps = LabelValueSteps.Label;
-
+  // counter to describe which set of inputs we are selecting
   @property()
   creatingMetricInputs: number = -1;
 
@@ -147,12 +143,11 @@ export class Main extends LitElement {
   metrics: Metric[] = structuredClone(dummyMetric)
 
   async getAllMetrics() {
-
     try {
 
       this.metrics = await GetAllMetrics(getDocId())
     } catch(err) {
-
+      this.metrics = []
     }
   }
 
@@ -164,12 +159,9 @@ export class Main extends LitElement {
     setTimeout(this.onDocHover.bind(this), 0);
 
     this.getAllMetrics()
-
-
   }
 
   removeSelectedElements() {
-
     this.currentElementList = this.currentElementList.filter(
       (elementsToKeep: any, _: number) => {
        if (elementsToKeep.pos !== this.creatingMetricInputs) {
@@ -199,6 +191,10 @@ export class Main extends LitElement {
 
   changeStep(e: any) {
     this.addMetricSteps = e.detail.method;
+
+    if (this.addMetricSteps === AddMetricSteps.AddingMetric) {
+      this.chosenMethod = CreateMetricOptions.SetManually
+    }
   }
 
   setCreatingMetricInputs(e: any) {
@@ -211,35 +207,21 @@ export class Main extends LitElement {
 
   addNewMetric(e: any) {
     let newMetric = e.detail.metric
-
     AddNewMetric(newMetric, getDocId())
 
+    // once we add new metric, we have to reset everything
     this.creatingMetricsMain = structuredClone(dummyMetric) 
     this.creatingMetrics = [structuredClone(dummySubmetric)]
     
-    console.log("position", this.position, this.metrics)
-    
+    // if we are editing an old one, we have to update the old one
     if (this.position !== -1) {
-console.log("CHANGING")
-
-      this.metrics[this.position] = newMetric;
-      
+      this.metrics[this.position] = newMetric;  
       this.position = -1;
-    } else {
-
-      console.log("PUSHED")
-
+    } else {  // if we are ADDING, then add
       this.metrics.push(newMetric)
     }
-    
-    
-    console.log(this.metrics)
-    
-    this.requestUpdate()
-    // on edit, we replace old metric
-
-    // on new one, we add metric
   
+    this.requestUpdate()
   }
 
   getUseMetric(e: any) {
@@ -256,21 +238,17 @@ console.log("CHANGING")
     this.position = e.detail.position;
   }
 
-  
-
-
   constructor() {
     super()
-    this.statistics = dummyStatistics;
 
     document.addEventListener(SetSelectedTab, this.setSelectedTab.bind(this))
     document.addEventListener(AddMetricSteps.AddingMetric, this.changeMethod.bind(this))
-    document.addEventListener("MetricSteps", this.changeStep.bind(this))
-    document.addEventListener("creating-metric-inputs", this.setCreatingMetricInputs.bind(this))
-    document.addEventListener("add-new-metric", this.addNewMetric.bind(this))
-    document.addEventListener("update-submetrics", this.updateSubmetrics.bind(this))
-    document.addEventListener("UseMetric", this.getUseMetric.bind(this))
-    document.addEventListener("EditMetric", this.getEditMetric.bind(this))
+    document.addEventListener(ChangeMetricSteps, this.changeStep.bind(this))
+    document.addEventListener(SetCurrentInput, this.setCreatingMetricInputs.bind(this))
+    document.addEventListener(AddNewMetricEvent, this.addNewMetric.bind(this))
+    document.addEventListener(UpdateSubmetrics, this.updateSubmetrics.bind(this))
+    document.addEventListener(UseMetric, this.getUseMetric.bind(this))
+    document.addEventListener(EditMetric, this.getEditMetric.bind(this))
 
   }
 
@@ -288,7 +266,6 @@ console.log("CHANGING")
     } else if (this.selectedTab === Distilled) {
       tab = html`
       <distilled-component
-      .statistics=${this.statistics}
       .newMetric=${this.newMetric}
       .chosenMethod=${this.chosenMethod}
       slot="distilled"
@@ -328,18 +305,15 @@ console.log("CHANGING")
     return html`
     <slot name="distilled"></slot>
     <main>
-    <nav-bar
-    .selectedTab=${this.selectedTab}
-    .addMetricSteps=${this.addMetricSteps}
-    >
-    </nav-bar>
-    
-    ${this.getMain()}
-
-    ${this.addMetricSteps === AddMetricSteps.AddingMetric ? html`
-    <button class="status">Status: ${this.getStatus()}</button>
-    ` : ""
-  }
+      <nav-bar
+      .selectedTab=${this.selectedTab}
+      .addMetricSteps=${this.addMetricSteps}
+      ></nav-bar>
+      ${this.getMain()}
+      ${this.addMetricSteps === AddMetricSteps.AddingMetric ? html`
+      <button class="status">Status: ${this.getStatus()}</button>
+      ` : ""
+      }
     </main>
     `
   }

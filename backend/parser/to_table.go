@@ -9,10 +9,6 @@ import (
 	"golang.org/x/net/html"
 )
 
-// type RowInfo struct {
-// 	RowName string;
-// }
-
 type Td []string
 
 type Table struct {
@@ -64,6 +60,7 @@ func includes(findTagNames []string, tn string) bool {
 	return false
 }
 
+/* Start recursive */
 // leave findTagNames as just p
 func getContents(tokenizer *html.Tokenizer, findTagNames []string, allText []byte) []byte {
 	tt := tokenizer.Next()
@@ -96,19 +93,13 @@ func getToken(tokenizer *html.Tokenizer, findTagNames []string, findText bool, e
 		return []byte(""), nil
 	} else if includes(findTagNames, tn) && !findText { // found text box
 
-		// return getToken(tokenizer, []string{"td"}, true, endTagNames)
 		return getContents(tokenizer, []string{"td"}, []byte{}), nil
 	}
-	// else if findText { // get contents in textbox
-	// 	// find everything within td
-
-	// 	return getContents(tokenizer, []string{"td"}, []byte{}), nil
-	// }
 
 	return getToken(tokenizer, findTagNames, findText, endTagNames)
 }
 
-func recurse(tokenizer *html.Tokenizer, tables []*Table, depth *int) []*Table {
+func populateTables(tokenizer *html.Tokenizer, tables []*Table) []*Table {
 	// it currently goes to the SPAN first because a call to table will take first column
 	for { // for every table
 		tt := tokenizer.Next()
@@ -148,8 +139,9 @@ func recurse(tokenizer *html.Tokenizer, tables []*Table, depth *int) []*Table {
 	}
 
 	return tables
-
 }
+
+/* End recursive */
 
 func createTokenizer(htmlDocument []byte) *html.Tokenizer {
 	ioReader := bytes.NewReader(htmlDocument)
@@ -161,11 +153,8 @@ func createTokenizer(htmlDocument []byte) *html.Tokenizer {
 func initTablizer(htmlDocument []byte) []*Table {
 	tokenizer := createTokenizer(htmlDocument)
 	tables := []*Table{}
-	depth := 0
 
-	tables = recurse(tokenizer, tables, &depth)
+	tables = populateTables(tokenizer, tables)
 
 	return tables
-	// parseText(tokenizer, tables, &depth)
-
 }

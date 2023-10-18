@@ -11,16 +11,6 @@ import (
 
 var ToTablizer chan []byte
 
-//
-// ToTablizer := make(chan []byte)
-// var ToFinanzier []tables
-
-// var ToCreateHtmlReport []Metrics
-
-// var ToApi uint
-
-// var FileToCreate []byte
-
 type Document struct {
 	ID        uint `gorm:"primaryKey"`
 	CreatedAt time.Time

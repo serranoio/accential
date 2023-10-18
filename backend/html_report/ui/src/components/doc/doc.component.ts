@@ -38,7 +38,7 @@ export class DocComponent extends LitElement {
   getLabel(): string {
     const label = this.creatingMetricFromDocument.label;
 
-    return label.length > 8 ? label.slice(0,8) + "..." : String(label); 
+    return label.length > 21 ? label.slice(0,21) + "..." : String(label); 
   }
 
   render() {
@@ -51,11 +51,11 @@ export class DocComponent extends LitElement {
         <h3>Current Metric</h3>
           <figure class="current-metric">
           <p class="${this.labelValueSteps === LabelValueSteps.Label ? "on" : ""}"
-          >Label: ${this.getLabel()}</p>
+          >Label <p>&nbsp;${this.getLabel()}</p></p>
           <p class="${this.labelValueSteps === LabelValueSteps.Value ? "on" : ""}"
-          >Value: ${this.getValue()}</p>
+          >Value <p>&nbsp;${this.getValue()}</p></p>
           <p class="${this.labelValueSteps === LabelValueSteps.Explanation ? "on" : ""}"   
-          >Explanation: </p>
+          >Explanation </p>
           </figure>
           
         </aside>

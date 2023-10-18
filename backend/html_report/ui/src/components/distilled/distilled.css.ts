@@ -112,11 +112,23 @@ html {
     visibility: visible;
     min-height: 0px;
     height: auto;
+    position: relative;
   }
 
   .turn {
     transform: rotate(180deg);
   }
 
+
+  .info ol {
+    padding: var(--spacing);
+    line-height: 1.5;
+  }
+
+  .edit-metric {
+    position: absolute;
+    right: 1%;
+    bottom: 16%;
+  }
   
 `;

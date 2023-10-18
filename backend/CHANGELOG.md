@@ -1,3 +1,8 @@
+# October 18th, 2023.
+- hosted on fly.toml
+- successfully mounted database in the volume
+- removed evaluation metrics (lol)
+
 # October 11th, 2023.
 - edit button styles 
 - Adding xbrl viewer (goated)

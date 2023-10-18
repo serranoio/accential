@@ -73,13 +73,15 @@ func InitDatabase() {
 	}
 	databaseExists := true
 
-	path := path.Join(dir, "database", "database.db")
+	pathd := path.Join(dir, "database", "database.db")
 	// if file already existed, don't add metrics
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+	if _, err := os.Stat(pathd); os.IsNotExist(err) {
 		databaseExists = false
+		os.Create(pathd)
+		log.Info("Database created")
 	}
 
-	Db, err = gorm.Open(sqlite.Open(path), &gorm.Config{})
+	Db, err = gorm.Open(sqlite.Open(pathd), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal(err)
@@ -102,12 +104,8 @@ func onRestart() {
 	metrics, name := StatusMetrics()
 	addMetricsToDatabase(metrics, name)
 
-	metrics, name = EvaluationMetrics()
-	addMetricsToDatabase(metrics, name)
-
 	metrics, name = BaseMetrics()
 	addMetricsToDatabase(metrics, name)
-
 }
 
 func addMetricsToDatabase(metrics []*comm.Metric, name string) {
@@ -264,46 +262,6 @@ func BaseMetrics() ([]*comm.Metric, string) {
 	return allMetrics, "Base"
 }
 
-func EvaluationMetrics() ([]*comm.Metric, string) {
-	allMetrics := []*comm.Metric{}
-
-	name := "Evaluation"
-
-	Mowc := comm.Metric{
-		Label:       "My balls",
-		Value:       10,
-		Explanation: "This is the Total Assets / Total Liabilities",
-		Operation:   "(a/a)",
-		Rating:      "",
-		Submetric: []*comm.Submetric{
-
-			&comm.Submetric{
-				Order:       1,
-				Label:       "Total Assets",
-				Value:       0,
-				Explanation: "Total assets is...",
-				Operation:   "/",
-			},
-			&comm.Submetric{
-				Order:       2,
-				Label:       "Total Liabilities",
-				Value:       0,
-				Explanation: "Total liabilities is...",
-				Operation:   "",
-			},
-		},
-		Tags: []*comm.Tag{
-			&comm.Tag{
-				Name: name,
-			},
-		},
-	}
-
-	allMetrics = append(allMetrics, &Mowc)
-
-	return allMetrics, "Evaluation"
-}
-
 func StatusMetrics() ([]*comm.Metric, string) {
 
 	allMetrics := []*comm.Metric{}
@@ -311,7 +269,7 @@ func StatusMetrics() ([]*comm.Metric, string) {
 	name := "Status"
 
 	Mowc := comm.Metric{
-		Label:       "Measure of Working Capital",
+		Label:       "Working Capital",
 		Value:       0,
 		Explanation: "This is the Total Assets / Total Liabilities",
 		Operation:   "(a/a)",
@@ -370,39 +328,8 @@ func StatusMetrics() ([]*comm.Metric, string) {
 		},
 	}
 
-	Mowc3 := comm.Metric{
-		Label:       "Tax Percentage",
-		Value:       0,
-		Explanation: "This is the Total Assets / Total Liabilities",
-		Operation:   "(a/a)",
-		Rating:      "",
-		Submetric: []*comm.Submetric{
-
-			&comm.Submetric{
-				Order:       1,
-				Label:       "Taxes payable",
-				Value:       0,
-				Explanation: "Total income is...",
-				Operation:   "/",
-			},
-			&comm.Submetric{
-				Order:       2,
-				Label:       "Net income",
-				Value:       0,
-				Explanation: "Taxes...",
-				Operation:   "",
-			},
-		},
-		Tags: []*comm.Tag{
-			&comm.Tag{
-				Name: name,
-			},
-		},
-	}
-
 	allMetrics = append(allMetrics, &Mowc)
 	allMetrics = append(allMetrics, &Mowc2)
-	allMetrics = append(allMetrics, &Mowc3)
 
 	return allMetrics, "Status"
 }

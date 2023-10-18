@@ -19,11 +19,9 @@ type HydrateDocument struct {
 	HydratedJS   string
 	HydratedCSS  string
 	HydratedFont string
-	Fun          string
 	Document     string
 	Metrics      []*comm.Metric
 	ID           string
-	XbrlViewer   string
 }
 
 func createHydrateDocument() *HydrateDocument {
@@ -31,9 +29,7 @@ func createHydrateDocument() *HydrateDocument {
 		HydratedJS:  "",
 		HydratedCSS: "",
 		Metrics:     nil,
-		Fun:         "hello",
 	}
-
 }
 
 func getFileNames() []string {
@@ -54,7 +50,6 @@ func getFileNames() []string {
 	})
 
 	return a
-
 }
 
 func getFile(lookForName string, fileNames []string) string {
@@ -85,31 +80,23 @@ func (d *HydrateDocument) hydrateAssets() {
 		log.Fatal(err)
 	}
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	path := path.Join(cwd, "html_report", "ui", "dist", "xbrl", "ixbrlviewer.js")
-	XbrlViewerBytes, err := os.ReadFile(path)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	d.HydratedCSS = string(cssBytes)
 	d.HydratedJS = string(jsBytes)
 	d.HydratedFont = string(fontBytes)
-	d.XbrlViewer = string(XbrlViewerBytes)
 }
 
-func createReport(metrics []*comm.Metric, htmlReport []byte) uint {
+func fillInDocument(metrics []*comm.Metric, htmlReport []byte) *HydrateDocument {
 	document := createHydrateDocument()
 	document.hydrateAssets()
 	document.Metrics = metrics
 	document.Document = string(htmlReport)
 
-	// get id from database document, put it in hydration.
+	return document
+}
+
+func createReport(metrics []*comm.Metric, htmlReport []byte) uint {
+	document := fillInDocument(metrics, htmlReport)
+	// get id from database document, hydrate document with this ID
 	documentToSave := &comm.Document{}
 	database.Db.Save(documentToSave)
 	document.ID = fmt.Sprintf("%d", documentToSave.ID)

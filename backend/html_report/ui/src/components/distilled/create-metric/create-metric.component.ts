@@ -4,7 +4,7 @@ import { AddMetricSteps, CreateMetricOptions, Metric, MetricSteps, Submetric, du
 import createMetricCss from './create-metric.css';
 
 import "../../shared/question.component"
-import { SetSelectedTab } from '../../../model/events';
+import { AddNewMetricEvent, ChangeMetricSteps, SetCurrentInput, SetSelectedTab, UpdateSubmetrics } from '../../../model/events';
 import { Distilled } from '../../../model/tabs';
 import { SetEq } from '../../../model/worker';
 
@@ -38,18 +38,15 @@ export class CreateMetricComponent extends LitElement {
   @property()
   creatingMetricInputs: number = -1;
 
-
 constructor() {
   super()
-
-  }
+}
 
   @property()
   addMetricSteps = AddMetricSteps.AddMetric;
 
-
   updateSubmetrics() {
-    this.dispatchEvent(new CustomEvent("update-submetrics", {
+    this.dispatchEvent(new CustomEvent(UpdateSubmetrics, {
       composed: true,
       bubbles: true,
       detail: {
@@ -89,14 +86,11 @@ constructor() {
     } else {
       return String(metrics[position].value);
     }
-
-
   }
 
   calculateMetricFromMetrics() {
     this.valueIntermediate = this.getMetric(0, this.submetrics);
   }
-
 
   doTheMath(e: any) {
     const eq = e.target.querySelector("#Value").value
@@ -107,7 +101,7 @@ constructor() {
     this.metric.submetric = this.submetrics
     this.metric.operation = SetEq(eq)
 
-    this.dispatchEvent(new CustomEvent("add-new-metric", {
+    this.dispatchEvent(new CustomEvent(AddNewMetricEvent, {
       composed: true,
       bubbles: true,
       detail: {
@@ -116,7 +110,6 @@ constructor() {
     }))
 
     this.metricSteps = MetricSteps.CreateMetric;
-    // in this step, also include name of metric, explanation and rating
   }
 
   getInputs() {
@@ -168,7 +161,6 @@ constructor() {
   }
 
   buttonSteps(): string {
-
     if (this.metricSteps === MetricSteps.EvaluateMetric) {
       return "Evaluate Metric";
     } else if (this.metricSteps === MetricSteps.AddParenthesis) {
@@ -208,7 +200,7 @@ constructor() {
   }
 
   sendNewStep(step: AddMetricSteps) {
-    this.dispatchEvent(new CustomEvent("MetricSteps", {
+    this.dispatchEvent(new CustomEvent(ChangeMetricSteps, {
       bubbles: true,
       composed: true,
       detail: {
@@ -220,7 +212,7 @@ constructor() {
   setCurrentMetric(e: any) {
      this.creatingMetricInputs = e.target.closest("div").dataset.pos;
 
-     this.dispatchEvent(new CustomEvent("creating-metric-inputs", {
+     this.dispatchEvent(new CustomEvent(SetCurrentInput, {
       bubbles: true,
       composed: true,
       detail: {
@@ -249,14 +241,13 @@ constructor() {
         }
       }))
 
-
       this.addMetricSteps = AddMetricSteps.AddingMetric
     }
   }
 
   getAddMetricSteps(): TemplateResult {
     if (this.addMetricSteps === AddMetricSteps.AddMetric) {
-      return html`Add Metric  <span> +<span>`
+      return html`Edit Metric  <span> +<span>`
     } else if (this.addMetricSteps === AddMetricSteps.ChooseMethod) {   
       return html`
         <button type="button">${fromDocument}</button>
@@ -409,27 +400,24 @@ constructor() {
 `;
   }
         
-        render() {
- 
-          const addMetric = html` <button class="add-another-metric" @click=${this.increaseMetricCounter}> 
-          Add Another Metric
-          </button>`;
-          
-          const removeMetric = html` <button class="remove-another-metric" @click=${this.decreaseMetricCounter}> 
-          Remove Another Metric
-          </button>`
-          
-          const evaluateMetrics = this.evaluateMetricsState();
-          
-          const addParenthesisInput = this.addParenthesisState();
-          
-          const buttons = html`
-          <div class="configure-metric-div">
-          ${addMetric}
-          ${removeMetric}
-          </div>
-          `
+  render() {
+    const addMetric = html` <button class="add-another-metric" @click=${this.increaseMetricCounter}> 
+    Add Another Metric
+    </button>`;
 
+    const removeMetric = html` <button class="remove-another-metric" @click=${this.decreaseMetricCounter}> 
+    Remove Another Metric
+    </button>`
+
+    const evaluateMetrics = this.evaluateMetricsState();
+    const addParenthesisInput = this.addParenthesisState();
+
+    const buttons = html`
+    <div class="configure-metric-div">
+    ${addMetric}
+    ${removeMetric}
+    </div>
+    `
 
     return html`
         <figure
@@ -442,7 +430,6 @@ constructor() {
        id="metric-form"
        >
        ${this.metricSteps === MetricSteps.AddParenthesis ? addParenthesisInput : ""}
-
           ${this.metricSteps === MetricSteps.EvaluateMetric ?
             html`
             <h2>Put together Submetrics</h2>
@@ -452,16 +439,12 @@ constructor() {
              : 
             ""
           }
-
           <button
           type="submit"
           class="create-metric">
-         ${this.buttonSteps()}</button>
-
-
-
+            ${this.buttonSteps()}
+          </button>
         </form>
-
         </figure>
     `
   }
