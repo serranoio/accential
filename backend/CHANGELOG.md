@@ -2,6 +2,8 @@
 - hosted on fly.toml
 - successfully mounted database in the volume
 - removed evaluation metrics (lol)
+- cleaned rabbitmq out of here
+- cleaned ui
 
 # October 11th, 2023.
 - edit button styles 
