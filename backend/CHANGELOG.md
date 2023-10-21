@@ -1,6 +1,7 @@
 # October 18th, 2023.
 - hosted on fly.toml
 - successfully mounted database in the volume
+    - persistent
 - removed evaluation metrics (lol)
 - cleaned rabbitmq out of here
 - cleaned ui

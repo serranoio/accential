@@ -4,6 +4,7 @@ const Metrics = "metric"
 const Get = "get"
 // const Update = "update"
 const Add = "add"
+const Delete = "delete"
 // const All = "all"
 const Api = "api"
 const Document = "document"
@@ -11,8 +12,8 @@ const ChangeName = "change-name"
 const GetName = "get-name"
 const Post = "post"
 
-// const url = 'http://127.0.0.1:8080'
-const url = 'https://accential.fly.dev'
+const url = 'http://127.0.0.1:8080'
+// const url = 'https://accential.fly.dev'
 
 export const GetAllMetrics = async (id: string) => {
     try {
@@ -26,6 +27,27 @@ export const GetAllMetrics = async (id: string) => {
     }
 }
 
+export const DeleteMetricDb = async (metric: Metric, docId: string) => {
+
+    try {
+        const metrics = await fetch(`${url}/${Api}/${Metrics}/${Delete}/${docId}`, {
+            method: "POST",
+            body: JSON.stringify(
+                metric
+                ),
+        }
+        )
+
+        const json = await metrics.json()
+
+        console.log(json)
+
+        return json.message
+    } catch (err) {
+        console.log(err)
+    }
+
+}
 export const AddNewMetric = async (newMetric: Metric, docId: string) => {
 
     try {

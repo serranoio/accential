@@ -64,6 +64,7 @@ html {
   }
   
 
+  .delete-metric,
   .include-metric,
   .more, .edit-metric {
     padding: var(--spacingQuarter) var(--spacingHalf);
@@ -77,7 +78,7 @@ html {
     transition: all .2s;
   }
   
-  .edit-metric:hover,
+  .delete-metric:hover,.edit-metric:hover,
   .include-metric:hover,
   .more:hover {
     box-shadow: 0 0 0 2px var(--gray80);
@@ -128,6 +129,12 @@ html {
   .edit-metric {
     position: absolute;
     right: 1%;
+    bottom: 16%;
+  }
+  
+  .delete-metric {
+    position: absolute;
+    right: 7%;
     bottom: 16%;
   }
   

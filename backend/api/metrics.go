@@ -104,6 +104,43 @@ func metricRoutes(r *gin.Engine) {
 		})
 	})
 
+	// this is currently for ALL documents. Make it for specific document
+	r.POST(path.Join(API, "metric", "delete", ":docid"), func(c *gin.Context) {
+		id := strings.ReplaceAll(c.Param("docid"), "$", "")
+		bytes, err := io.ReadAll(c.Request.Body)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"failed to parse": "bad",
+			})
+		}
+
+		// get metric & update it with ID
+		metric := &comm.Metric{}
+		err = json.Unmarshal(bytes, &metric)
+
+		database.Db.Delete(&metric)
+		database.Db.Save(metric.Submetric)
+		database.Db.Save(metric)
+
+		document := comm.Document{}
+		database.Db.Model(&comm.Document{}).
+			Preload("Metrics").
+			Preload("Metrics.Submetric").
+			First(&document, id)
+
+		database.Db.Save(document)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"failed to parse": "bad",
+			})
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "success",
+		})
+	})
+
 	r.GET(path.Join(API, "metric", "get", ":docid"), func(c *gin.Context) {
 
 		id := strings.ReplaceAll(c.Param("docid"), "$", "")

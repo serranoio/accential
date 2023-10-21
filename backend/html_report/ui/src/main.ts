@@ -6,9 +6,9 @@ import './components/nav-bar/nav-bar.component';
 import "./components/doc/doc.component"
 import "./components/distilled/distilled.component"
 import { CreateMetric, Distilled, Doc } from './model/tabs';
-import { AddNewMetricEvent, ChangeMetricSteps, EditMetric, SetCurrentInput, SetSelectedTab, UpdateSubmetrics, UseMetric } from './model/events';
+import { AddNewMetricEvent, ChangeMetricSteps, DeleteMetric, EditMetric, SetCurrentInput, SetSelectedTab, UpdateSubmetrics, UseMetric } from './model/events';
 import { AddMetricSteps, CreateMetricOptions, LabelValueSteps, Metric, Submetric, dummyMetric, dummySubmetric } from './model/metric';
-import { AddNewMetric, GetAllMetrics } from './model/api';
+import { AddNewMetric, DeleteMetricDb, GetAllMetrics } from './model/api';
 import { getDocId } from './model/util';
 
 @customElement('main-component')
@@ -59,7 +59,7 @@ export class Main extends LitElement {
   position: number = -1;
 
   giveStyles(element: HTMLElement) {
-    element.style.boxShadow = "0 0 0 2px var(--info)";
+    element.style.boxShadow = "inset 0 0 0 2px var(--info)";
     element.style.zIndex = "10";
   }
   
@@ -147,7 +147,7 @@ export class Main extends LitElement {
 
       this.metrics = await GetAllMetrics(getDocId())
     } catch(err) {
-      this.metrics = []
+      this.metrics = [dummyMetric]
     }
   }
 
@@ -220,7 +220,10 @@ export class Main extends LitElement {
     } else {  // if we are ADDING, then add
       this.metrics.push(newMetric)
     }
-  
+ 
+    this.addMetricSteps = AddMetricSteps.AddMetric;
+    this.chosenMethod = CreateMetricOptions.SetManually;
+
     this.requestUpdate()
   }
 
@@ -238,6 +241,12 @@ export class Main extends LitElement {
     this.position = e.detail.position;
   }
 
+  getDeleteMetric(e: any) {
+    let deletingMetric = e.detail.metric;
+    this.metrics = this.metrics.filter((metric: Metric) => metric !== deletingMetric);
+    DeleteMetricDb(deletingMetric, getDocId());
+  }
+
   constructor() {
     super()
 
@@ -249,6 +258,7 @@ export class Main extends LitElement {
     document.addEventListener(UpdateSubmetrics, this.updateSubmetrics.bind(this))
     document.addEventListener(UseMetric, this.getUseMetric.bind(this))
     document.addEventListener(EditMetric, this.getEditMetric.bind(this))
+    document.addEventListener(DeleteMetric, this.getDeleteMetric.bind(this))
 
   }
 

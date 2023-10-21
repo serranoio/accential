@@ -1,7 +1,7 @@
 import { customElement, property } from 'lit/decorators.js'
 import { LitElement, html } from 'lit'
 import { CreateMetricOptions, Metric, Submetric, dummyMetric } from '../../../model/metric';
-import { EditMetric, UseMetric } from '../../../model/events';
+import { DeleteMetric, EditMetric, UseMetric } from '../../../model/events';
 
 @customElement('metric-component')
 export class MetricComponent extends LitElement {
@@ -53,6 +53,16 @@ chosenMethod = CreateMetricOptions.SetManually
     }))
   }
 
+  deleteMetric() {
+    this.dispatchEvent(new CustomEvent(DeleteMetric, {
+      composed: true,
+      bubbles: true,
+      detail: {
+          metric: this.metric
+      }
+    }))
+  }
+  
   render() {
     return html`
         <tr class="row second">
@@ -60,7 +70,7 @@ chosenMethod = CreateMetricOptions.SetManually
         <h3>${this.metric.label}</h3>
         </td>
         <td class="column">
-        <p>${this.metric.value}</p>
+        <p>${this.metric.value === -1 ? "could not find" : this.metric.value}</p>
         </td>
         <td class="column">
         n/a 
@@ -84,6 +94,7 @@ chosenMethod = CreateMetricOptions.SetManually
           return html`<li><p>${submetric.label} with value of: ${submetric.value} ${submetric.operation}</p></li>`
         })}</ol>
         <button class="edit-metric" @click=${this.editMetric}>Edit</button>
+        <button class="delete-metric" @click=${this.deleteMetric}>Delete</button>
         </td>
         </tr>
     `
