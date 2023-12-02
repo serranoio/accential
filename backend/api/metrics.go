@@ -69,29 +69,32 @@ func metricRoutes(r *gin.Engine) {
 		}
 
 		// get old metrics
-		document := comm.Document{}
-		database.Db.Model(&comm.Document{}).
-			Preload("Metrics").
-			Preload("Metrics.Submetric").
-			First(&document, id)
+		// document := comm.Document{}
+		// database.Db.Model(&comm.Document{}).
+		// 	Preload("Metrics").
+		// 	Preload("Metrics.Submetric").
+		// 	First(&document, id)
 
-		// update old one if theyre same ID
-		for i, documentMetrics := range document.Metrics {
-			if documentMetrics.ID == metric.ID {
-				document.Metrics[i] = metric
-				document.Metrics[i].Submetric = metric.Submetric
-			}
-		}
+		// ifUpdate := false
+		// // update old one if theyre same ID
+		// for _, documentMetrics := range document.Metrics {
+		// 	if documentMetrics.ID == metric.ID {
+		// 		ifUpdate = true
+		// 	}
+		// }
 
-		if metric.DocumentID == 0 {
-			// combine them
-			document.Metrics = append(document.Metrics, metrics...)
-		}
+		// if metric.DocumentID == 0 {
+		// 	// combine them
+		// 	document.Metrics = append(document.Metrics, metrics...)
+		// }
 
-		// save it all
-		database.Db.Save(document)
+		// if ifUpdate {
 		database.Db.Save(metric)
 		database.Db.Save(metric.Submetric)
+		// }
+
+		// save it all
+		// database.Db.Save(document)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{

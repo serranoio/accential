@@ -77,8 +77,13 @@ export class Main extends LitElement {
         this.creatingMetrics = structuredClone(this.creatingMetrics)
       }
     } else if (this.labelValueSteps === LabelValueSteps.Value) {
-      const num = element.innerText.replace(/\,/g,'');
+      let num = element.innerText.replace(/\,/g,'');  // tbh, idk what this is
       
+      if (num[0] === "(" || num[num.length-1] === ")") {
+        num = num.replace("(", "-")
+        num = num.replace(")", "")
+      }
+
       this.creatingMetricFromDocument.value = Number(num);
       if (advanceStep) {
         this.labelValueSteps = LabelValueSteps.Explanation
@@ -100,9 +105,8 @@ export class Main extends LitElement {
     this.frame.onmouseover = (e) => {
       let element = e.target as HTMLElement;
 
-
       element = element.closest("td")!;
-      if (!element || element.nodeName !== "TD") {
+      if (!element || element.nodeName !== "TD" || this.addMetricSteps === AddMetricSteps.AddMetric) {
           return
       }
 
@@ -164,12 +168,12 @@ export class Main extends LitElement {
   removeSelectedElements() {
     this.currentElementList = this.currentElementList.filter(
       (elementsToKeep: any, _: number) => {
-       if (elementsToKeep.pos !== this.creatingMetricInputs) {
-         return true;
-        } 
+      if (elementsToKeep.pos !== this.creatingMetricInputs) {
+        return true;
+      } 
 
       this.removeStyles(elementsToKeep.reference)
-       return false;
+      return false;
     })
   }
 
@@ -194,6 +198,9 @@ export class Main extends LitElement {
 
     if (this.addMetricSteps === AddMetricSteps.AddingMetric) {
       this.chosenMethod = CreateMetricOptions.SetManually
+    } else if (this.addMetricSteps === AddMetricSteps.AddMetric) {
+      this.creatingMetricFromDocument = structuredClone(dummyMetric);
+      this.labelValueSteps = LabelValueSteps.Label
     }
   }
 
@@ -259,7 +266,6 @@ export class Main extends LitElement {
     document.addEventListener(UseMetric, this.getUseMetric.bind(this))
     document.addEventListener(EditMetric, this.getEditMetric.bind(this))
     document.addEventListener(DeleteMetric, this.getDeleteMetric.bind(this))
-
   }
 
   getMain() {
@@ -271,6 +277,7 @@ export class Main extends LitElement {
       .frame="${this.frame}"
       .creatingMetricFromDocument=${this.creatingMetricFromDocument}
       .labelValueSteps=${this.labelValueSteps}
+      .addMetricSteps=${this.addMetricSteps}
       >
       </doc-component>`
     } else if (this.selectedTab === Distilled) {

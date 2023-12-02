@@ -165,9 +165,7 @@ func CleanString(cleanB []byte) string {
 	clean := string(cleanB)
 	clean = strings.ToLower(clean)
 	// perform lemmatization here
-	if clean == "total revenues" {
-		clean = "total revenue"
-	}
+
 	clean = strings.ReplaceAll(clean, " ", "")
 	clean = strings.ReplaceAll(clean, "\n", "")
 	clean = strings.ReplaceAll(clean, "\r", "")

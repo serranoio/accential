@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js'
 
 import { tabs } from '../../model/tabs';
 import docCss from './doc.css';
-import { LabelValueSteps, dummyMetric } from '../../model/metric';
+import { AddMetricSteps, LabelValueSteps, dummyMetric } from '../../model/metric';
 
 @customElement('doc-component')
 export class DocComponent extends LitElement {
@@ -24,6 +24,9 @@ export class DocComponent extends LitElement {
 
   @property()
   labelValueSteps = LabelValueSteps.Label;
+
+  @property()
+  addMetricSteps = AddMetricSteps.AddMetric
 
   constructor() {
     super()
@@ -46,19 +49,23 @@ export class DocComponent extends LitElement {
     return html`
         ${this.frame}
 
-        <aside class="labels">
+        ${this.addMetricSteps !== AddMetricSteps.AddMetric ?
+
+          html`<aside class="labels">
 
         <h3>Current Metric</h3>
-          <figure class="current-metric">
-          <p class="${this.labelValueSteps === LabelValueSteps.Label ? "on" : ""}"
-          >Label <p>&nbsp;${this.getLabel()}</p></p>
-          <p class="${this.labelValueSteps === LabelValueSteps.Value ? "on" : ""}"
-          >Value <p>&nbsp;${this.getValue()}</p></p>
-          <p class="${this.labelValueSteps === LabelValueSteps.Explanation ? "on" : ""}"   
-          >Explanation </p>
-          </figure>
-          
-        </aside>
+        <figure class="current-metric">
+        <p class="${this.labelValueSteps === LabelValueSteps.Label ? "on" : ""}"
+        >Label <p>&nbsp;${this.getLabel()}</p></p>
+        <p class="${this.labelValueSteps === LabelValueSteps.Value ? "on" : ""}"
+        >Value <p>&nbsp;${this.getValue()}</p></p>
+        <p class="${this.labelValueSteps === LabelValueSteps.Explanation ? "on" : ""}"   
+        >Explanation </p>
+        </figure>
+        
+        </aside>`
+        : ""
+      }
     `
   }
 }

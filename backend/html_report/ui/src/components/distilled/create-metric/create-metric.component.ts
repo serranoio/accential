@@ -1,6 +1,6 @@
 import { LitElement, TemplateResult, html } from 'lit'
 import { customElement, property, query } from 'lit/decorators.js'
-import { AddMetricSteps, CreateMetricOptions, Metric, MetricSteps, Submetric, dummyMetric, dummySubmetric, fromDocument, fromOthers, fromOutsideSource, setManually } from '../../../model/metric';
+import { AddMetricSteps, CreateMetricOptions, Metric, MetricSteps, Submetric, dummyMetric, dummySubmetric, fromDocument, fromOthers, setManually } from '../../../model/metric';
 import createMetricCss from './create-metric.css';
 
 import "../../shared/question.component"
@@ -9,8 +9,6 @@ import { Distilled } from '../../../model/tabs';
 import { SetEq } from '../../../model/worker';
 
 // 3 Steps
-
-
 @customElement('create-metric-component')
 export class CreateMetricComponent extends LitElement {
 
@@ -37,6 +35,9 @@ export class CreateMetricComponent extends LitElement {
 
   @property()
   creatingMetricInputs: number = -1;
+
+  @property()
+  xssAttack: boolean = false;
 
 constructor() {
   super()
@@ -92,8 +93,31 @@ constructor() {
     this.valueIntermediate = this.getMetric(0, this.submetrics);
   }
 
+  sanitize(eq: string): boolean {
+    const acceptableChars = ["(", ")", "+", "-", "*", "/", " ", "."]
+
+    for (let i = 0; i < eq.length; i++) {
+        if (isNaN(Number(eq[i])) && !acceptableChars.includes(eq[i])) {
+          return false;
+        }
+    }
+
+    return true;
+  }
+
+  changeXssAttack() {
+    this.xssAttack = false;
+  }
+
   doTheMath(e: any) {
     const eq = e.target.querySelector("#Value").value
+
+    if (!this.sanitize(eq)) {
+      setTimeout(this.changeXssAttack.bind(this), 3000);
+      this.xssAttack = true;
+      return;
+    }
+
     this.metric.value = eval(eq)
     this.metric.label = e.target.querySelector("#Label").value
     this.metric.explanation = e.target.querySelector("#Explanation").value
@@ -187,7 +211,7 @@ constructor() {
     } else if (name === "Value") {
       return "Please input the value of the metric"
     } else if (name === "Rating") {
-      return "Please give it your own rating. Optional."
+      return "Please give it your own rating, 1-10. Optional."
     }
   }
 
@@ -249,10 +273,10 @@ constructor() {
     if (this.addMetricSteps === AddMetricSteps.AddMetric) {
       return html`Edit Metric  <span> +<span>`
     } else if (this.addMetricSteps === AddMetricSteps.ChooseMethod) {   
+      // <button type="button">${fromOutsideSource}</button>
       return html`
         <button type="button">${fromDocument}</button>
         <button type="button">${setManually}</button>
-        <button type="button">${fromOutsideSource}</button>
         <button type="button">${fromOthers}</button>
       `
     } else {
@@ -266,9 +290,9 @@ constructor() {
     return html`<button
       type="button"
       style="cursor: ${this.addMetricSteps === AddMetricSteps.AddMetric ? "pointer" : ""};
-           z-index: ${this.addMetricSteps === AddMetricSteps.AddingMetric && pos === Number(this.creatingMetricInputs) ? "-1" : "1"};
-           box-shadow: ${this.addMetricSteps === AddMetricSteps.AddingMetric  && pos === Number(this.creatingMetricInputs) ? "0 0 0 1px var(--success)" : "0 0 0 0"};
-           opacity: ${this.addMetricSteps === AddMetricSteps.AddingMetric  && pos === Number(this.creatingMetricInputs) ? "1" : ""};
+          z-index: ${this.addMetricSteps === AddMetricSteps.AddingMetric && pos === Number(this.creatingMetricInputs) ? "-1" : "1"};
+          box-shadow: ${this.addMetricSteps === AddMetricSteps.AddingMetric  && pos === Number(this.creatingMetricInputs) ? "0 0 0 1px var(--success)" : "0 0 0 0"};
+          opacity: ${this.addMetricSteps === AddMetricSteps.AddingMetric  && pos === Number(this.creatingMetricInputs) ? "1" : ""};
       
            "
       @click=${this.switchAddMetricSteps}
@@ -386,7 +410,9 @@ constructor() {
     .description=${this.getDescription("Explanation")}
     .width=${20}></question-component>
     </label>
-    <input type="text" id="Explanation" value=${this.metric.explanation} placeholder="Explanation of Metric">
+    <input
+    type="text"
+      id="Explanation" value=${this.metric.explanation} placeholder="Explanation of Metric">
     </div>
     <div class="labelinput">
     <label>Rating
@@ -394,12 +420,19 @@ constructor() {
     .description=${this.getDescription("Rating")}
     .width=${30}></question-component>
   </label>
-  <input type="number" id="Rating" placeholder="Rating">
+  <input
+  type="range"
+  min="1"
+  max="10"
+  step="1"
+  id="Rating"
+  value=${this.metric.rating}
+  placeholder="Rating">
 </div>
 </div>
 `;
   }
-        
+
   render() {
     const addMetric = html` <button class="add-another-metric" @click=${this.increaseMetricCounter}> 
     Add Another Metric
@@ -428,7 +461,9 @@ constructor() {
        <form
        @submit=${this.onCreateMetric}
        id="metric-form"
+       
        >
+       ${this.xssAttack ? html`<div class="xss"><p>Only (, ), +, -, *, /, ., ,, and numbers are allowed. No xss attacks ;)</p></div>` : ""}
        ${this.metricSteps === MetricSteps.AddParenthesis ? addParenthesisInput : ""}
           ${this.metricSteps === MetricSteps.EvaluateMetric ?
             html`

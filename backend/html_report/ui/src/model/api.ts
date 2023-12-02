@@ -12,8 +12,8 @@ const ChangeName = "change-name"
 const GetName = "get-name"
 const Post = "post"
 
-const url = 'http://127.0.0.1:8080'
-// const url = 'https://accential.fly.dev'
+// const url = 'http://127.0.0.1:8080'
+const url = 'https://accential.fly.dev'
 
 export const GetAllMetrics = async (id: string) => {
     try {

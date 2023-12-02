@@ -9,6 +9,13 @@ export default css`
 
 }
 
+.rating {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  transform-origin: left;
+}
+
 html {
   font-size: 62.5%;
 }
@@ -57,6 +64,7 @@ html {
     display: flex;
     justify-content: center;
     width: 100%;
+    position: relative;
   }
 
   tbody {
@@ -77,13 +85,31 @@ html {
     color: var(--gray60);
     transition: all .2s;
   }
+
+  .delete-metric {
+    box-shadow: 0 0 0 2px var(--errorColor);
+    color: var(--errorColor);
+  }
   
-  .delete-metric:hover,.edit-metric:hover,
+  .delete-metric:hover {
+    box-shadow: 0 0 0 2px var(--errorColor);
+    color: var(--errorColorD10);
+  }
+  
+  .edit-metric {
+    box-shadow: 0 0 0 2px var(--info);
+    color: var(--info);
+  }
+  
+  .edit-metric:hover {
+    box-shadow: 0 0 0 2px var(--info);
+    color: var(--info);
+  }
+
   .include-metric:hover,
   .more:hover {
     box-shadow: 0 0 0 2px var(--gray80);
     color: var(--gray80);
-    
   }
   
   .include-metric {
@@ -91,14 +117,41 @@ html {
     box-shadow: 0 0 0 2px var(--success);
     color: var(--success);
   }
-  
+
   .include-metric:hover {
     box-shadow: 0 0 0 2px var(--successD10);
     color: var(--successD10);
-
+  }
+  
+  
+  .column {
+    position: relative;
+  }
+  
+    .overall-rating {
+      position: absolute;
+      right: 1%;
+      font-size: 2.4rem;
+      font-weight: 500;
+    --bg-size: 400%;
+    color: var(--gray22);
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: move-bg 8s infinite linear;
+    width: 20rem;
+    text-align: center;
+    z-index: 9999;
+    word-wrap: none;
   }
 
+
+    @keyframes move-bg {
+      to {
+        background-position: var(--bg-size) 0;
+      }
+  }
   
+
   .info {
     overflow: hidden;
     // transition: all .5s;

@@ -32,8 +32,8 @@ func createApi() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
-		// Access-Control-Allow-Origin
+		// AllowAllOrigins: true,
+		AllowOrigins:     []string{"https://accential.pages.dev"},
 		AllowMethods:     []string{"PUT", "GET", "PATCH", "POST"},
 		AllowHeaders:     []string{"Origin"},
 		AllowCredentials: true,

@@ -56,6 +56,14 @@
 
   --success: #53a051;
   --successD10: #479144;
+  --successColorD20:#40813d;
+  --warningColor:#f8be34;
+  --warningColorD10: #e0ac16;
+  --warningColorD20: #c79915;
+--alertColor:#f1813f;
+--alertColorD10:#da742e;
+--errorColor: #dc4e41;
+--errorColorD10:#c84535;
   --info: #006d9c;
 
 

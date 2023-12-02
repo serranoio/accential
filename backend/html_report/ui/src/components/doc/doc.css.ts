@@ -60,6 +60,15 @@ html {
     background-color: white;
 }
 
+.frame a {
+  pointer-events: none;
+}
+
+.doc a {
+  
+  pointer-events: none;
+}
+
 p {
 
 }

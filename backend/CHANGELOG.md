@@ -1,3 +1,11 @@
+# December 1st, 2023.
+- negative numbers parseable on frontend
+- removed "Creating Metric" when viewing doc page without actually creating a metric
+- made links in document unclickable
+- eval is now safe
+- backend API is only available to accential.pages.dev
+
+
 # October 18th, 2023.
 - hosted on fly.toml
 - successfully mounted database in the volume
